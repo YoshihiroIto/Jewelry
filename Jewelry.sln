@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry.Collections", "Collections\Jewelry.Collections.csproj", "{8302FA84-3258-4051-BAB2-FACFAC9D14A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jewelry.Collections.Test", "Collections.Test\Jewelry.Collections.Test.csproj", "{C8C6E6A1-57B3-4472-B2F8-DF6662454C95}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8302FA84-3258-4051-BAB2-FACFAC9D14A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8302FA84-3258-4051-BAB2-FACFAC9D14A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8302FA84-3258-4051-BAB2-FACFAC9D14A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8302FA84-3258-4051-BAB2-FACFAC9D14A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8C6E6A1-57B3-4472-B2F8-DF6662454C95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8C6E6A1-57B3-4472-B2F8-DF6662454C95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8C6E6A1-57B3-4472-B2F8-DF6662454C95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8C6E6A1-57B3-4472-B2F8-DF6662454C95}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
