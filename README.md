@@ -1,6 +1,8 @@
 Jewelry
 =======
 
+License
+-------
 The MIT License
  
 Copyright (c) 2013 copyright Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)
