@@ -1,6 +1,6 @@
-﻿// Copyright (c) 2013 Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)
+﻿// Copyright (c) 2013-2016 Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)
 // 
-// Permission is hereby granted, free of charge, to any person obtaininga copy
+// Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
@@ -17,6 +17,7 @@
 // IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+using System;
 using System.Collections.Generic;
 
 namespace Jewelry.Collections
@@ -30,13 +31,16 @@ namespace Jewelry.Collections
     {
         private class KeyValue
         {
-            public TKey Key{ get; set; }
-            public TValue Value{ get; set; }
+            public TKey Key { get; set; }
+            public TValue Value { get; set; }
         }
 
-        private readonly LinkedList<KeyValue>                       _list;
-        private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup;
-        private readonly object                                     _sync;
+        private readonly LinkedList<KeyValue> _list = new LinkedList<KeyValue>();
+
+        private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup =
+            new Dictionary<TKey, LinkedListNode<KeyValue>>();
+
+        private readonly object _lockObj;
 
         private readonly int _maxCapacity;
         private int _currentSize;
@@ -45,14 +49,11 @@ namespace Jewelry.Collections
         /// Constructor.
         /// </summary>
         /// <param name="maxCapacity">The maximum number of values this instance can hold.</param>
-        public LruCache(int maxCapacity)
+        /// <param name="isThreadSafe"></param>
+        public LruCache(int maxCapacity, bool isThreadSafe)
         {
-            _list = new LinkedList<KeyValue>();
-            _lookup = new Dictionary<TKey, LinkedListNode<KeyValue>>();
-            _sync = new object();
-
             _maxCapacity = maxCapacity;
-            _currentSize = 0;
+            _lockObj = isThreadSafe ? new object() : null;
         }
 
         /// <summary>
@@ -79,15 +80,15 @@ namespace Jewelry.Collections
         /// </summary>
         public void Clear()
         {
-            lock(_sync)
-            {
-                foreach(var valueNode in _list)
-                {
-                    OnDiscardedValue(valueNode.Key, valueNode.Value);
-                }
+            if (_lockObj == null)
+                ClearInternal();
 
-                _list.Clear();
-                _lookup.Clear();
+            else
+            {
+                lock (_lockObj)
+                {
+                    ClearInternal();
+                }
             }
         }
 
@@ -98,18 +99,29 @@ namespace Jewelry.Collections
         /// <returns>The key of the value to get.</returns>
         public TValue Get(TKey key)
         {
-            lock(_sync)
+            if (_lockObj == null)
+                return GetInternal(key);
+
+            else
             {
-                 LinkedListNode<KeyValue> listNode;
-
-                if (_lookup.TryGetValue(key, out listNode))
+                lock (_lockObj)
                 {
-                    _list.Remove(listNode);
-                    _list.AddFirst(listNode);
-
-                    return listNode.Value.Value;
+                    return GetInternal(key);
                 }
-                return default(TValue);
+            }
+        }
+
+        public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
+        {
+            if (_lockObj == null)
+                return GetOrAddInternal(key, valueFactory);
+
+            else
+            {
+                lock (_lockObj)
+                {
+                    return GetOrAddInternal(key, valueFactory);
+                }
             }
         }
 
@@ -120,42 +132,14 @@ namespace Jewelry.Collections
         /// <param name="value">The value of the element to add.</param>
         public void Add(TKey key, TValue value)
         {
-            lock(_sync)
+            if (_lockObj == null)
+                AddInternal(key, value);
+
+            else
             {
-                LinkedListNode<KeyValue> listNode;
-
-                if (_lookup.TryGetValue(key, out listNode))
+                lock (_lockObj)
                 {
-                    _currentSize -= GetValueSize(listNode.Value.Value);
-
-                    _list.Remove(listNode);
-                    _list.AddFirst(listNode);
-
-                    listNode.Value.Value = value;
-
-                    _currentSize += GetValueSize(listNode.Value.Value);
-                }
-                else
-                {
-                    var keyValue = new KeyValue { Key = key, Value = value};
-
-                    listNode = _list.AddFirst(keyValue);
-
-                    _lookup.Add(key, listNode);
-
-                    _currentSize += GetValueSize(listNode.Value.Value);
-                }
-
-                while (_currentSize > _maxCapacity)
-                {
-                    var valueNode = _list.Last;
-
-                    _list.RemoveLast();
-                    _lookup.Remove(valueNode.Value.Key);
-
-                    _currentSize -= GetValueSize(valueNode.Value.Value);
-
-                    OnDiscardedValue(valueNode.Value.Key, valueNode.Value.Value);
+                    AddInternal(key, value);
                 }
             }
         }
@@ -166,19 +150,111 @@ namespace Jewelry.Collections
         /// <param name="key">The key of the element to remove.</param>
         public void Remove(TKey key)
         {
-            lock(_sync)
+            if (_lockObj == null)
+                RemoveInternal(key);
+
+            else
             {
-                LinkedListNode<KeyValue> listNode;
+                lock (_lockObj)
+                {
+                    RemoveInternal(key);
+                }
+            }
+        }
 
-                if (!_lookup.TryGetValue(key, out listNode)) return;
+        private void ClearInternal()
+        {
+            foreach (var valueNode in _list)
+                OnDiscardedValue(valueNode.Key, valueNode.Value);
 
-                OnDiscardedValue(listNode.Value.Key, listNode.Value.Value);
+            _list.Clear();
+            _lookup.Clear();
+        }
 
+        private TValue GetInternal(TKey key)
+        {
+            LinkedListNode<KeyValue> listNode;
+
+            if (_lookup.TryGetValue(key, out listNode))
+            {
+                _list.Remove(listNode);
+                _list.AddFirst(listNode);
+
+                return listNode.Value.Value;
+            }
+
+            return default(TValue);
+        }
+
+        private TValue GetOrAddInternal(TKey key, Func<TKey, TValue> valueFactory)
+        {
+            LinkedListNode<KeyValue> listNode;
+
+            if (_lookup.TryGetValue(key, out listNode))
+            {
+                _list.Remove(listNode);
+                _list.AddFirst(listNode);
+
+                return listNode.Value.Value;
+            }
+
+            var value = valueFactory(key);
+            AddInternal(key, value);
+            return value;
+        }
+
+        private void AddInternal(TKey key, TValue value)
+        {
+            LinkedListNode<KeyValue> listNode;
+
+            if (_lookup.TryGetValue(key, out listNode))
+            {
                 _currentSize -= GetValueSize(listNode.Value.Value);
 
                 _list.Remove(listNode);
-                _lookup.Remove(key);
+                _list.AddFirst(listNode);
+
+                listNode.Value.Value = value;
+
+                _currentSize += GetValueSize(listNode.Value.Value);
             }
+            else
+            {
+                var keyValue = new KeyValue {Key = key, Value = value};
+
+                listNode = _list.AddFirst(keyValue);
+
+                _lookup.Add(key, listNode);
+
+                _currentSize += GetValueSize(listNode.Value.Value);
+            }
+
+            while (_currentSize > _maxCapacity)
+            {
+                var valueNode = _list.Last;
+
+                _list.RemoveLast();
+                _lookup.Remove(valueNode.Value.Key);
+
+                _currentSize -= GetValueSize(valueNode.Value.Value);
+
+                OnDiscardedValue(valueNode.Value.Key, valueNode.Value.Value);
+            }
+        }
+
+        private void RemoveInternal(TKey key)
+        {
+            LinkedListNode<KeyValue> listNode;
+
+            if (_lookup.TryGetValue(key, out listNode) == false)
+                return;
+
+            OnDiscardedValue(listNode.Value.Key, listNode.Value.Value);
+
+            _currentSize -= GetValueSize(listNode.Value.Value);
+
+            _list.Remove(listNode);
+            _lookup.Remove(key);
         }
     }
 }

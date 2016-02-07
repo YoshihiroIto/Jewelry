@@ -14,7 +14,7 @@ namespace Collections.Test
                 set;
             }
             
-            public StringLruCache() : base(25)
+            public StringLruCache() : base(25, true)
             {
             }
 
@@ -51,6 +51,7 @@ namespace Collections.Test
             Assert.AreEqual(cache.Get("key2"), "1122334455");
             Assert.AreEqual(cache.DiscardedValueCount, 1);
 
+            // ReSharper disable once UnusedVariable
             var touch = cache.Get("key1");
             cache.Add("key3", "6677889900");
 
