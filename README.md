@@ -1,6 +1,8 @@
 Jewelry
 =======
 
+https://www.nuget.org/packages/Jewelry.Collections
+
 License
 -------
 The MIT License

@@ -7,8 +7,8 @@
     <ProjectGuid>{8302FA84-3258-4051-BAB2-FACFAC9D14A1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Jewelry</RootNamespace>
-    <AssemblyName>Jewelry</AssemblyName>
+    <RootNamespace>Jewelry.Collections</RootNamespace>
+    <AssemblyName>Jewelry.Collections</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
