@@ -1,9 +1,10 @@
 ﻿using Jewelry.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
-namespace Collections.Test
+// ReSharper disable StringLiteralTypo
+
+namespace Jewelry.Test.Collections
 {
-    [TestClass]
     public class LruCacheTest
     {
         public class StringLruCache : LruCache<string, string>
@@ -29,36 +30,36 @@ namespace Collections.Test
             }
         }
         
-        [TestMethod]
+        [Fact]
         public void SimpleMethod()
         {
             var cache = new StringLruCache();
  
             cache.Add("key0", "0123456789");
 
-            Assert.AreEqual(cache.Get("key0"), "0123456789");
-            Assert.AreEqual(cache.Get("key1"), null);
+            Assert.Equal( "0123456789", cache.Get("key0"));
+            Assert.Null(cache.Get("key1"));
 
             cache.Add("key1", "ABCDEFGHIJ");
 
-            Assert.AreEqual(cache.Get("key0"), "0123456789");
-            Assert.AreEqual(cache.Get("key1"), "ABCDEFGHIJ");
+            Assert.Equal("0123456789", cache.Get("key0"));
+            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
 
             cache.Add("key2", "1122334455");
 
-            Assert.AreEqual(cache.Get("key0"), null);
-            Assert.AreEqual(cache.Get("key1"), "ABCDEFGHIJ");
-            Assert.AreEqual(cache.Get("key2"), "1122334455");
-            Assert.AreEqual(cache.DiscardedValueCount, 1);
+            Assert.Null(cache.Get("key0"));
+            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+            Assert.Equal("1122334455", cache.Get("key2"));
+            Assert.Equal(1, cache.DiscardedValueCount);
 
             // ReSharper disable once UnusedVariable
             var touch = cache.Get("key1");
             cache.Add("key3", "6677889900");
 
-            Assert.AreEqual(cache.Get("key0"), null);
-            Assert.AreEqual(cache.Get("key1"), "ABCDEFGHIJ");
-            Assert.AreEqual(cache.Get("key2"), null);
-            Assert.AreEqual(cache.Get("key3"), "6677889900");
+            Assert.Null(cache.Get("key0"));
+            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+            Assert.Null(cache.Get("key2"));
+            Assert.Equal("6677889900", cache.Get("key3"));
         }
     }
 }

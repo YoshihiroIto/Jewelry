@@ -173,9 +173,7 @@ namespace Jewelry.Collections
 
         private TValue GetInternal(TKey key)
         {
-            LinkedListNode<KeyValue> listNode;
-
-            if (_lookup.TryGetValue(key, out listNode))
+            if (_lookup.TryGetValue(key, out var listNode))
             {
                 _list.Remove(listNode);
                 _list.AddFirst(listNode);
@@ -183,14 +181,12 @@ namespace Jewelry.Collections
                 return listNode.Value.Value;
             }
 
-            return default(TValue);
+            return default;
         }
 
         private TValue GetOrAddInternal(TKey key, Func<TKey, TValue> valueFactory)
         {
-            LinkedListNode<KeyValue> listNode;
-
-            if (_lookup.TryGetValue(key, out listNode))
+            if (_lookup.TryGetValue(key, out var listNode))
             {
                 _list.Remove(listNode);
                 _list.AddFirst(listNode);
@@ -205,9 +201,7 @@ namespace Jewelry.Collections
 
         private void AddInternal(TKey key, TValue value)
         {
-            LinkedListNode<KeyValue> listNode;
-
-            if (_lookup.TryGetValue(key, out listNode))
+            if (_lookup.TryGetValue(key, out var listNode))
             {
                 _currentSize -= GetValueSize(listNode.Value.Value);
 
@@ -244,9 +238,7 @@ namespace Jewelry.Collections
 
         private void RemoveInternal(TKey key)
         {
-            LinkedListNode<KeyValue> listNode;
-
-            if (_lookup.TryGetValue(key, out listNode) == false)
+            if (_lookup.TryGetValue(key, out var listNode) == false)
                 return;
 
             OnDiscardedValue(listNode.Value.Key, listNode.Value.Value);
