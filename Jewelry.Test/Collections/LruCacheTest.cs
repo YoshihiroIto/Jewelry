@@ -31,7 +31,7 @@ namespace Jewelry.Test.Collections
         }
         
         [Fact]
-        public void SimpleMethod()
+        public void Basic()
         {
             var cache = new StringLruCache();
  
