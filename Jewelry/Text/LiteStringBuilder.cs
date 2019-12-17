@@ -195,7 +195,7 @@ namespace Jewelry.Text
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AppendLine(string s, bool putEmptyNewLine)
+        public void AppendLine(string s, bool putEmptyNewLine = true)
         {
             Append(s);
 
@@ -204,7 +204,7 @@ namespace Jewelry.Text
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AppendLine(IEnumerable<string> ss, bool putEmptyNewLine)
+        public void AppendLine(IEnumerable<string> ss, bool putEmptyNewLine = true)
         {
             var isEmpty = true;
             foreach (var s in ss)

@@ -77,8 +77,8 @@ namespace Jewelry.Test.Text
         {
             using var lsb = new LiteStringBuilder();
 
-            lsb.AppendLine("aaa", true);
-            lsb.AppendLine("bbb", true);
+            lsb.AppendLine("aaa");
+            lsb.AppendLine("bbb");
 
             Assert.Equal("aaa\r\nbbb\r\n", lsb.ToString());
         }
@@ -88,9 +88,9 @@ namespace Jewelry.Test.Text
         {
             using var lsb = new LiteStringBuilder();
 
-            lsb.AppendLine("aaa", true);
+            lsb.AppendLine("aaa");
             lsb.AppendLineIfNotNull(null);
-            lsb.AppendLine("bbb", true);
+            lsb.AppendLine("bbb");
 
             Assert.Equal("aaa\r\n\r\nbbb\r\n", lsb.ToString());
         }
