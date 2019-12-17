@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Buffers;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -187,10 +188,33 @@ namespace Jewelry.Text
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AppendLine(string s)
+        public void Append(IEnumerable<string> ss)
+        {
+            foreach (var s in ss)
+                Append(s);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AppendLine(string s, bool putEmptyNewLine)
         {
             Append(s);
-            AppendNewLine();
+
+            if (putEmptyNewLine || string.IsNullOrEmpty(s) == false)
+                AppendNewLine();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void AppendLine(IEnumerable<string> ss, bool putEmptyNewLine)
+        {
+            var isEmpty = true;
+            foreach (var s in ss)
+            {
+                Append(s);
+                isEmpty = false;
+            }
+
+            if (putEmptyNewLine || isEmpty == false)
+                AppendNewLine();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -225,7 +249,6 @@ retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
                 Grow(32);
-
                 goto retry;
             }
                 
@@ -240,7 +263,6 @@ retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
                 Grow(32);
-
                 goto retry;
             }
                 
@@ -255,12 +277,10 @@ retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
                 Grow(32);
-
                 goto retry;
             }
                 
             _pos += charsWritten;
-
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -270,7 +290,6 @@ retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
                 Grow(32);
-
                 goto retry;
             }
                 
