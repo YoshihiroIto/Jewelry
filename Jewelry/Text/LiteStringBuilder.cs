@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Based code
-// https://github.com/dotnet/corefx/blob/release/3.1/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs を元にしました。
+// https://github.com/dotnet/corefx/blob/release/3.1/src/Common/src/CoreLib/System/Text/ValueStringBuilder.cs
 
 namespace Jewelry.Text
 {
