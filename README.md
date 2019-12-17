@@ -1,7 +1,12 @@
 Jewelry
 =======
 
-https://www.nuget.org/packages/Jewelry.Collections
+## Including External Assets
+
+* .NET is a cross-platform runtime for cloud, IoT, and desktop apps.
+    * https://github.com/dotnet/runtime/
+    * MIT License
+
 
 License
 -------
