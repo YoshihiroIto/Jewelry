@@ -12,8 +12,6 @@ namespace Jewelry.Text
 {
     public ref struct LiteStringBuilder
     {
-        #nullable enable
-
         private char[]? _arrayToReturnToPool;
         private Span<char> _chars;
         private int _pos;

@@ -21,7 +21,7 @@ namespace Jewelry.Collections
         private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup =
             new Dictionary<TKey, LinkedListNode<KeyValue>>();
 
-        private readonly object _lockObj;
+        private readonly object? _lockObj;
 
         private readonly int _maxCapacity;
         private int _currentSize;
@@ -162,7 +162,7 @@ namespace Jewelry.Collections
                 return listNode.Value.Value;
             }
 
-            return default;
+            return default!;
         }
 
         private TValue GetOrAddInternal(TKey key, Func<TKey, TValue> valueFactory)
