@@ -13,8 +13,8 @@ namespace Jewelry.Text
 
 #if NETSTANDARD2_1 || NETCOREAPP
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
-            public string ToString(string src)
-                => ToSpan(src).ToString();
+            public string ToString(string? src)
+                => ToSpan(src ?? ReadOnlySpan<char>.Empty).ToString();
 #endif
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -48,7 +48,7 @@ namespace Jewelry.Text
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<StringSpan> Split(string text, char separator,
+        public ReadOnlySpan<StringSpan> Split(string? text, char separator,
             StringSplitOptions options = StringSplitOptions.None)
         {
             if (text == null)
@@ -105,7 +105,7 @@ namespace Jewelry.Text
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<StringSpan> Split(string text, ReadOnlySpan<char> separators,
+        public ReadOnlySpan<StringSpan> Split(string? text, ReadOnlySpan<char> separators,
             StringSplitOptions options = StringSplitOptions.None)
         {
             if (text == null)
