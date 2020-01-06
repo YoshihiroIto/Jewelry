@@ -101,7 +101,7 @@ namespace Jewelry.Test.Memory
         }
 
         [Fact]
-        public void AllayPoolGlow()
+        public void ArrayPoolGlow()
         {
             using var tb = new TempBuffer<int>(0);
 
