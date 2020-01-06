@@ -90,7 +90,18 @@ namespace Jewelry.Test.Memory
         }
 
         [Fact]
-        public void Glow()
+        public void StackGlow()
+        {
+            using var tb = new TempBuffer<int>(stackalloc int[0]);
+
+            for(var i = 0;i != 1024;++ i)
+                tb.Add(i);
+
+            Assert.Equal(1024, tb.Length);
+        }
+
+        [Fact]
+        public void AllayPoolGlow()
         {
             using var tb = new TempBuffer<int>(0);
 
