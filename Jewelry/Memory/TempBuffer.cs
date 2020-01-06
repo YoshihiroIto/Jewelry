@@ -9,8 +9,10 @@ namespace Jewelry.Memory
     {
         public Span<T> Buffer => _buffer.Slice(0, _pos);
         public int Length => _pos;
+
         public ref T this[int index]
         {
+            [MethodImpl(MethodImplOptions.AggressiveInlining)]
             get
             {
                 Debug.Assert(index < _pos);
