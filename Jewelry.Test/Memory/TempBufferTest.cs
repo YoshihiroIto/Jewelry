@@ -1,4 +1,5 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Jewelry.Memory;
 using Xunit;
 
@@ -109,6 +110,109 @@ namespace Jewelry.Test.Memory
                 tb.Add(i);
 
             Assert.Equal(1024, tb.Length);
+        }
+
+        [Fact]
+        public void AddFromT()
+        {
+            var source = new[] {0, 1, 2};
+
+            using var tb = new TempBuffer<int>(0);
+
+            tb.AddFrom(source);
+
+            Assert.Equal(3, tb.Length);
+            Assert.Equal(0, tb[0]);
+            Assert.Equal(1, tb[1]);
+            Assert.Equal(2, tb[2]);
+        }
+
+        [Fact]
+        public void AddFrom()
+        {
+            var source = new[] {0, 1, 2};
+
+            using var tb = new TempBuffer<int>(0);
+
+            tb.AddFrom((IEnumerable)source);
+
+            Assert.Equal(3, tb.Length);
+            Assert.Equal(0, tb[0]);
+            Assert.Equal(1, tb[1]);
+            Assert.Equal(2, tb[2]);
+        }
+
+        [Fact]
+        public void IndexOf()
+        {
+            var source = new[] {0, 1, 2};
+
+            using var tb = new TempBuffer<int>(0);
+
+            tb.AddFrom(source);
+
+            Assert.Equal(2, tb.IndexOf(2));
+            Assert.Equal(-1, tb.IndexOf(100));
+        }
+
+        [Fact]
+        public void FirstOrDefault()
+        {
+            var source = new[] {0, 1, 2};
+
+            using var tb = new TempBuffer<int>(0);
+
+            tb.AddFrom(source);
+
+            Assert.Equal(0, tb.FirstOrDefault());
+        }
+
+        [Fact]
+        public void FirstOrDefaultEmpty()
+        {
+            using var tb = new TempBuffer<int>(0);
+
+            Assert.Equal(default, tb.FirstOrDefault());
+        }
+
+        [Fact]
+        public void FirstOrDefaultPredicate()
+        {
+            var source = new[] {0, 1, 2};
+
+            using var tb = new TempBuffer<int>(0);
+
+            tb.AddFrom(source);
+
+            Assert.Equal(1, tb.FirstOrDefault(x => x != 0));
+        }
+
+        [Fact]
+        public void FirstOrDefaultPredicateEmpty()
+        {
+            using var tb = new TempBuffer<int>(0);
+
+            Assert.Equal(default, tb.FirstOrDefault(x => x != 0));
+        }
+
+        [Fact]
+        public void LastOrDefault()
+        {
+            var source = new[] {0, 1, 2};
+
+            using var tb = new TempBuffer<int>(0);
+
+            tb.AddFrom(source);
+
+            Assert.Equal(2, tb.LastOrDefault());
+        }
+
+        [Fact]
+        public void LastOrDefaultEmpty()
+        {
+            using var tb = new TempBuffer<int>(0);
+
+            Assert.Equal(default, tb.LastOrDefault());
         }
     }
 }
