@@ -205,6 +205,9 @@ namespace Jewelry.Memory
             if (source is ICollection<T> c2)
                 return c2.Count;
 
+            if (source is IReadOnlyCollection<T> c3)
+                return c3.Count;
+
             return -1;
         }
 
@@ -217,8 +220,10 @@ namespace Jewelry.Memory
             if (source is ICollection<T> c2)
                 return c2.Count;
 
+            if (source is IReadOnlyCollection<T> c3)
+                return c3.Count;
+
             return -1;
         }
     }
-
 }
