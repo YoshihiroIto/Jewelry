@@ -2,5 +2,23 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageLicenseFile>README.md</PackageLicenseFile>
+    <Copyright>Copyright (c) 2019 copyright Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)</Copyright>
+    <Version>2.0.1</Version>
+    <Authors>Yoshihiro Ito</Authors>
+    <Company>Jewelry</Company>
+    <PackageProjectUrl>https://github.com/YoshihiroIto/Jewelry</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/YoshihiroIto/Jewelry</RepositoryUrl>
+    <PackageTags>collection string lru cache text</PackageTags>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <FileVersion>2.0.0.0</FileVersion>
+    <Description>.NET support</Description>
   </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 </Project>
