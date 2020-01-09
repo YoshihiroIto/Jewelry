@@ -10,55 +10,21 @@ namespace Jewelry.Collections
     /// <typeparam name="TValue">The type of the values in the cache.</typeparam>
     public class LruCache<TKey, TValue>
     {
-        private class KeyValue
-        {
-            public TKey Key { get; set; }
-            public TValue Value { get; set; }
-        }
-
-        private readonly LinkedList<KeyValue> _list = new LinkedList<KeyValue>();
-
-        private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup =
-            new Dictionary<TKey, LinkedListNode<KeyValue>>();
-
-        private readonly object? _lockObj;
-
-        private readonly int _maxCapacity;
-        private int _currentSize;
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="maxCapacity">The maximum number of values this instance can hold.</param>
-        /// <param name="isThreadSafe"></param>
         public LruCache(int maxCapacity, bool isThreadSafe)
         {
             _maxCapacity = maxCapacity;
             _lockObj = isThreadSafe ? new object() : null;
         }
 
-        /// <summary>
-        /// Value size.
-        /// </summary>
-        /// <param name="value">The key of the element.</param>
-        /// <returns>The value of the element.</returns>
         protected virtual int GetValueSize(TValue value)
         {
             return 1;
         }
 
-        /// <summary>
-        /// Processing of discarded value.
-        /// </summary>
-        /// <param name="key">Key</param>
-        /// <param name="value">Value</param>
         protected virtual void OnDiscardedValue(TKey key, TValue value)
         {
         }
 
-        /// <summary>
-        /// Removes all values.
-        /// </summary>
         public void Clear()
         {
             if (_lockObj == null)
@@ -73,11 +39,34 @@ namespace Jewelry.Collections
             }
         }
 
-        /// <summary>
-        /// Get value.
-        /// </summary>
-        /// <param name="key">Key</param>
-        /// <returns>The key of the value to get.</returns>
+        public bool Contains(TKey key)
+        {
+            if (_lockObj == null)
+                return ContainsInternal(key);
+
+            else
+            {
+                lock (_lockObj)
+                {
+                    return ContainsInternal(key);
+                }
+            }
+        }
+
+        public bool TryGetValue(TKey key, out TValue value)
+        {
+            if (_lockObj == null)
+                return TryGetValueInternal(key, out value);
+
+            else
+            {
+                lock (_lockObj)
+                {
+                    return TryGetValueInternal(key, out value);
+                }
+            }
+        }
+
         public TValue Get(TKey key)
         {
             if (_lockObj == null)
@@ -106,11 +95,6 @@ namespace Jewelry.Collections
             }
         }
 
-        /// <summary>
-        /// Add the value to the cache.
-        /// </summary>
-        /// <param name="key">The key of the element to add.</param>
-        /// <param name="value">The value of the element to add.</param>
         public void Add(TKey key, TValue value)
         {
             if (_lockObj == null)
@@ -125,10 +109,6 @@ namespace Jewelry.Collections
             }
         }
 
-        /// <summary>
-        /// Remove the value to the cache.
-        /// </summary>
-        /// <param name="key">The key of the element to remove.</param>
         public void Remove(TKey key)
         {
             if (_lockObj == null)
@@ -150,6 +130,26 @@ namespace Jewelry.Collections
 
             _list.Clear();
             _lookup.Clear();
+        }
+
+        private bool ContainsInternal(TKey key)
+        {
+            return _lookup.ContainsKey(key);
+        }
+
+        private bool TryGetValueInternal(TKey key, out TValue value)
+        {
+            if (_lookup.TryGetValue(key, out var listNode))
+            {
+                _list.Remove(listNode);
+                _list.AddFirst(listNode);
+
+                value = listNode.Value.Value;
+                return true;
+            }
+
+            value = default;
+            return false;
         }
 
         private TValue GetInternal(TKey key)
@@ -229,5 +229,17 @@ namespace Jewelry.Collections
             _list.Remove(listNode);
             _lookup.Remove(key);
         }
+
+        private class KeyValue
+        {
+            public TKey Key { get; set; }
+            public TValue Value { get; set; }
+        }
+
+        private readonly LinkedList<KeyValue> _list = new LinkedList<KeyValue>();
+        private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup = new Dictionary<TKey, LinkedListNode<KeyValue>>();
+        private readonly object? _lockObj;
+        private readonly int _maxCapacity;
+        private int _currentSize;
     }
 }
