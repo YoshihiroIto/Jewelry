@@ -11,11 +11,9 @@ namespace Jewelry.Text
             public int Start;
             public int Length;
 
-#if NETSTANDARD2_1 || NETCOREAPP
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public string ToString(string? src)
                 => ToSpan(src ?? ReadOnlySpan<char>.Empty).ToString();
-#endif
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public ReadOnlySpan<char> ToSpan(ReadOnlySpan<char> src)
