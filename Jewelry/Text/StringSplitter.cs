@@ -13,7 +13,9 @@ namespace Jewelry.Text
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public string ToString(string? src)
-                => ToSpan(src ?? ReadOnlySpan<char>.Empty).ToString();
+            {
+                return src == null ? string.Empty : ToSpan(src.AsSpan()).ToString();
+            }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public ReadOnlySpan<char> ToSpan(ReadOnlySpan<char> src)
@@ -46,8 +48,7 @@ namespace Jewelry.Text
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<StringSpan> Split(string? text, char separator,
-            StringSplitOptions options = StringSplitOptions.None)
+        public ReadOnlySpan<StringSpan> Split(string? text, char separator, StringSplitOptions options = StringSplitOptions.None)
         {
             if (text == null)
                 return ReadOnlySpan<StringSpan>.Empty;
@@ -55,8 +56,7 @@ namespace Jewelry.Text
             return Split(text.AsSpan(), separator, options);
         }
 
-        public ReadOnlySpan<StringSpan> Split(ReadOnlySpan<char> text, char separator,
-            StringSplitOptions options = StringSplitOptions.None)
+        public ReadOnlySpan<StringSpan> Split(ReadOnlySpan<char> text, char separator, StringSplitOptions options = StringSplitOptions.None)
         {
             var offset = 0;
             var length = 0;
@@ -101,10 +101,19 @@ namespace Jewelry.Text
 
             return _buffer.Slice(0, count);
         }
+        
+#if NETSTANDARD2_0
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<StringSpan> Split(string? text, ReadOnlySpan<char> separators,
-            StringSplitOptions options = StringSplitOptions.None)
+        public ReadOnlySpan<StringSpan> Split(string? text, string separators, StringSplitOptions options = StringSplitOptions.None)
+            => Split(text, separators.AsSpan(), options);
+        
+        public ReadOnlySpan<StringSpan> Split(ReadOnlySpan<char> text, string separators, StringSplitOptions options = StringSplitOptions.None)
+            => Split(text, separators.AsSpan(), options);
+#endif
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ReadOnlySpan<StringSpan> Split(string? text, ReadOnlySpan<char> separators, StringSplitOptions options = StringSplitOptions.None)
         {
             if (text == null)
                 return ReadOnlySpan<StringSpan>.Empty;
@@ -112,8 +121,7 @@ namespace Jewelry.Text
             return Split(text.AsSpan(), separators, options);
         }
 
-        public ReadOnlySpan<StringSpan> Split(ReadOnlySpan<char> text, ReadOnlySpan<char> separators,
-            StringSplitOptions options = StringSplitOptions.None)
+        public ReadOnlySpan<StringSpan> Split(ReadOnlySpan<char> text, ReadOnlySpan<char> separators, StringSplitOptions options = StringSplitOptions.None)
         {
             var offset = 0;
             var length = 0;

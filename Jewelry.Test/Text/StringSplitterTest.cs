@@ -229,7 +229,7 @@ namespace Jewelry.Test.Text
         {
             using var ss = new StringSplitter(64);
 
-            var es = ss.Split(null, " ,", StringSplitOptions.RemoveEmptyEntries);
+            var es = ss.Split((string)null, " ,", StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(0, es.Length);
         }

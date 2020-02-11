@@ -239,10 +239,27 @@ namespace Jewelry.Text
             Append('\r');
             Append('\n');
         }
+        
+#if NETSTANDARD2_0
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Append(short v, string format) => Append(v, format.AsSpan());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Append(int v, string format) => Append(v, format.AsSpan());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Append(float v, string format) => Append(v, format.AsSpan());
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public void Append(double v, string format) => Append(v, format.AsSpan());
+#endif
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Append(short v, ReadOnlySpan<char> format = default)
         {
+#if NETSTANDARD2_0
+            Append(v.ToString(format.ToString()));
+#else
 retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
@@ -251,12 +268,15 @@ retry:
             }
                 
             _pos += charsWritten;
-
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Append(int v, ReadOnlySpan<char> format = default)
         {
+#if NETSTANDARD2_0
+            Append(v.ToString(format.ToString()));
+#else
 retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
@@ -265,12 +285,15 @@ retry:
             }
                 
             _pos += charsWritten;
-
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Append(float v, ReadOnlySpan<char> format = default)
         {
+#if NETSTANDARD2_0
+            Append(v.ToString(format.ToString()));
+#else
 retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
@@ -279,11 +302,15 @@ retry:
             }
                 
             _pos += charsWritten;
+#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Append(double v, ReadOnlySpan<char> format = default)
         {
+#if NETSTANDARD2_0
+            Append(v.ToString(format.ToString()));
+#else
 retry:
             if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
             {
@@ -292,8 +319,8 @@ retry:
             }
                 
             _pos += charsWritten;
+#endif
         }
-
 
         public void Append(char c, int count)
         {
