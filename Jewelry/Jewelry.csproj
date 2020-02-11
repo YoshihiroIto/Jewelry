@@ -3,7 +3,7 @@
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageLicenseFile>README.md</PackageLicenseFile>
-    <Copyright>Copyright (c) 2019 copyright Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)</Copyright>
+    <Copyright>Copyright (c) 2019-2020 copyright Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)</Copyright>
     <Version>2.0.1</Version>
     <Authors>Yoshihiro Ito</Authors>
     <Company>Jewelry</Company>
