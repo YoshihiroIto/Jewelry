@@ -13,7 +13,7 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <FileVersion>2.0.0.0</FileVersion>
     <Description>.NET support</Description>
-    <PackageVersion>2.0.3</PackageVersion>
+    <PackageVersion>2.0.4</PackageVersion>
     <LangVersion>8</LangVersion>
     <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
   </PropertyGroup>
@@ -23,7 +23,7 @@
       <PackagePath></PackagePath>
     </None>
   </ItemGroup>
-  <ItemGroup Condition = "'$(TargetFramework)' == 'netstandard2.0'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Memory" Version="4.5.3" />
   </ItemGroup>
 </Project>
