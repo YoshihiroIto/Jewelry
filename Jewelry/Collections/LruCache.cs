@@ -1,19 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
 namespace Jewelry.Collections
 {
-    /// <summary>
-    /// Simple Implementation C# LRU Cache
-    /// </summary>
-    /// <typeparam name="TKey">The type of the keys in the cache.</typeparam>
-    /// <typeparam name="TValue">The type of the values in the cache.</typeparam>
-    public class LruCache<TKey, TValue>
+    public class ThreadSafeLruCache<TKey, TValue> : LruCacheBase<TKey, TValue, LruCacheBase.IsThreadSafe>
     {
-        public LruCache(int maxCapacity, bool isThreadSafe)
+        public ThreadSafeLruCache(int maxCapacity)
+            : base(maxCapacity)
+        {
+        }
+    }
+
+    public class LruCache<TKey, TValue> : LruCacheBase<TKey, TValue, LruCacheBase.IsNotThreadSafe>
+    {
+        public LruCache(int maxCapacity)
+            : base(maxCapacity)
+        {
+        }
+    }
+
+    public class LruCacheBase<TKey, TValue, TIsThreadSafe>
+    {
+        public LruCacheBase(int maxCapacity)
         {
             _maxCapacity = maxCapacity;
-            _lockObj = isThreadSafe ? new object() : null;
+
+            if (typeof(TIsThreadSafe) == typeof(LruCacheBase.IsThreadSafe))
+                _lockObj = new object();
         }
 
         protected virtual int GetValueSize(TValue value)
@@ -25,104 +39,112 @@ namespace Jewelry.Collections
         {
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Clear()
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 ClearInternal();
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     ClearInternal();
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Contains(TKey key)
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 return ContainsInternal(key);
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     return ContainsInternal(key);
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool TryGetValue(TKey key, out TValue value)
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 return TryGetValueInternal(key, out value);
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     return TryGetValueInternal(key, out value);
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TValue Get(TKey key)
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 return GetInternal(key);
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     return GetInternal(key);
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 return GetOrAddInternal(key, valueFactory);
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     return GetOrAddInternal(key, valueFactory);
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Add(TKey key, TValue value)
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 AddInternal(key, value);
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     AddInternal(key, value);
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void Remove(TKey key)
         {
-            if (_lockObj == null)
+            if (typeof(TIsThreadSafe) != typeof(LruCacheBase.IsThreadSafe))
                 RemoveInternal(key);
 
             else
             {
-                lock (_lockObj)
+                lock (_lockObj!)
                 {
                     RemoveInternal(key);
                 }
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ClearInternal()
         {
             foreach (var valueNode in _list)
@@ -132,6 +154,7 @@ namespace Jewelry.Collections
             _lookup.Clear();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private bool ContainsInternal(TKey key)
         {
             return _lookup.ContainsKey(key);
@@ -241,5 +264,16 @@ namespace Jewelry.Collections
         private readonly object? _lockObj;
         private readonly int _maxCapacity;
         private int _currentSize;
+    }
+
+    public class LruCacheBase
+    {
+        public struct IsThreadSafe
+        {
+        }
+
+        public struct IsNotThreadSafe
+        {
+        }
     }
 }
