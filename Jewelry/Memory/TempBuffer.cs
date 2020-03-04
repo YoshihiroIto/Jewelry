@@ -10,6 +10,7 @@ namespace Jewelry.Memory
 {
     public ref struct TempBuffer<T>
     {
+        public Span<T> Buffer => _buffer.Slice(0, _pos);
         public int Length => _pos;
 
         public ref T this[int index]
