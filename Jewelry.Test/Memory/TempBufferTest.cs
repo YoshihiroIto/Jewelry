@@ -30,13 +30,6 @@ namespace Jewelry.Test.Memory
             Assert.Equal(1, tb[1]);
             Assert.Equal(2, tb[2]);
 
-            var b = tb.Buffer;
-
-            Assert.Equal(3, b.Length);
-            Assert.Equal(0, b[0]);
-            Assert.Equal(1, b[1]);
-            Assert.Equal(2, b[2]);
-
             tb[0] = 999;
             tb[1] = 888;
             tb[2] = 777;
@@ -44,10 +37,6 @@ namespace Jewelry.Test.Memory
             Assert.Equal(999, tb[0]);
             Assert.Equal(888, tb[1]);
             Assert.Equal(777, tb[2]);
-
-            Assert.Equal(999, b[0]);
-            Assert.Equal(888, b[1]);
-            Assert.Equal(777, b[2]);
         }
 
         [Theory]
