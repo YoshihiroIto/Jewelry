@@ -7,6 +7,7 @@ namespace Jewelry.Memory
 {
     public ref struct FixedBuffer<T>
     {
+        public Span<T> Buffer => _buffer.AsSpan(0, Length);
         public readonly int Length;
 
         public ref T this[int index]
@@ -15,7 +16,7 @@ namespace Jewelry.Memory
             get
             {
                 Debug.Assert(index < Length);
-                return ref _buffer[index];
+                return ref _buffer![index];
             }
         }
 
