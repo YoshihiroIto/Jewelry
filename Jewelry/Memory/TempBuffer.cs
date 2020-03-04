@@ -25,6 +25,17 @@ namespace Jewelry.Memory
         private T[]? _arrayToReturnToPool;
         private Span<T> _buffer;
         private int _pos;
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator Span<T>(in TempBuffer<T> x)
+        {
+            return x._buffer.Slice(0, x._pos);
+        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static implicit operator ReadOnlySpan<T>(in TempBuffer<T> x)
+        {
+            return x._buffer.Slice(0, x._pos);
+        }
 
         public TempBuffer(Span<T> initialBuffer)
         {
