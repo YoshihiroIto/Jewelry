@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Jewelry.Text;
+using System;
 using Xunit;
 
 // ReSharper disable StringLiteralTypo
@@ -118,7 +119,7 @@ namespace Jewelry.Test.Text
         {
             using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append(1, "D4");
+            lsb.Append(1, "D4".AsSpan());
 
             Assert.Equal("0001", lsb.ToString());
         }
@@ -146,7 +147,7 @@ namespace Jewelry.Test.Text
         {
             using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append(1.5, "F3");
+            lsb.Append(1.5, "F3".AsSpan());
 
             Assert.Equal("1.500", lsb.ToString());
         }

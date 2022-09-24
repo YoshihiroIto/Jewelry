@@ -46,7 +46,7 @@ namespace Jewelry.Memory
             var buffer = _buffer;
             this = default;
 
-            if (buffer != null)
+            if (buffer is not null)
                 ArrayPool<T>.Shared.Return(buffer);
         }
     }

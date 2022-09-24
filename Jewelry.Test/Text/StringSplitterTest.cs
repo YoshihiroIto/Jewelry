@@ -201,7 +201,7 @@ namespace Jewelry.Test.Text
 
             var text = "abc,def xyz";
 
-            var es = ss.Split(text, " ,");
+            var es = ss.Split(text, " ,".AsSpan());
 
             Assert.Equal(3, es.Length);
             Assert.Equal("abc", es[0].ToString(text));
@@ -216,7 +216,7 @@ namespace Jewelry.Test.Text
 
             var text = " , , abc,, , ,def,, xyz,,,  ";
 
-            var es = ss.Split(text, " ,", StringSplitOptions.RemoveEmptyEntries);
+            var es = ss.Split(text, " ,".AsSpan(), StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(3, es.Length);
             Assert.Equal("abc", es[0].ToString(text));
@@ -229,7 +229,7 @@ namespace Jewelry.Test.Text
         {
             using var ss = new StringSplitter(64);
 
-            var es = ss.Split((string)null, " ,", StringSplitOptions.RemoveEmptyEntries);
+            var es = ss.Split((string?)null, " ,".AsSpan(), StringSplitOptions.RemoveEmptyEntries);
 
             Assert.Equal(0, es.Length);
         }

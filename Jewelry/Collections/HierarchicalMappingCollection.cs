@@ -6,8 +6,8 @@ using System.Diagnostics;
 
 namespace Jewelry.Collections
 {
-    // -----------------------------------------------------------------------------------------------
     public class HierarchicalMappingCollection<TSource, TTarget> : ObservableCollection<TTarget>, IDisposable
+        where TSource : notnull
     {
         internal readonly Func<TSource, INotifyCollectionChanged> GetSourceChildren;
         internal readonly Func<TTarget, Collection<TTarget>> GetTargetChildren;
@@ -16,8 +16,7 @@ namespace Jewelry.Collections
         private readonly Func<TSource, TTarget> _converter;
         private readonly bool _disposeElement;
 
-        private readonly Dictionary<TSource, (TTarget, SourceCollectionChanged)> _itemDict =
-            new Dictionary<TSource, (TTarget, SourceCollectionChanged)>();
+        private readonly Dictionary<TSource, (TTarget, SourceCollectionChanged)> _itemDict = new();
 
         public HierarchicalMappingCollection(
             INotifyCollectionChanged source,
@@ -46,19 +45,21 @@ namespace Jewelry.Collections
             _source.CollectionChanged -= SourceOnCollectionChanged;
         }
 
-        private void SourceOnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private void SourceOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    foreach (TSource item in e.NewItems)
-                        AddHierarchy(this, item);
+                    if (e.NewItems is not null)
+                        foreach (TSource item in e.NewItems)
+                            AddHierarchy(this, item);
 
                     break;
 
                 case NotifyCollectionChangedAction.Remove:
-                    foreach (TSource item in e.OldItems)
-                        RemoveHierarchy(this, item);
+                    if (e.OldItems is not null)
+                        foreach (TSource item in e.OldItems)
+                            RemoveHierarchy(this, item);
 
                     break;
 
@@ -85,9 +86,8 @@ namespace Jewelry.Collections
             var targetChildren = GetTargetChildren(targetItem);
 
             var children = GetSourceChildren(sourceItem);
-            if (children != null)
-                foreach (var itemChild in (IEnumerable<TSource>)children)
-                    AddHierarchy(targetChildren, itemChild);
+            foreach (var itemChild in (IEnumerable<TSource>)children)
+                AddHierarchy(targetChildren, itemChild);
         }
 
         internal void RemoveHierarchy(Collection<TTarget> targets, TSource sourceItem)
@@ -98,9 +98,8 @@ namespace Jewelry.Collections
             var targetChildren = GetTargetChildren(targetItem);
 
             var children = GetSourceChildren(sourceItem);
-            if (children != null)
-                foreach (var itemChild in (IEnumerable<TSource>)children)
-                    RemoveHierarchy(targetChildren, itemChild);
+            foreach (var itemChild in (IEnumerable<TSource>)children)
+                RemoveHierarchy(targetChildren, itemChild);
 
             _itemDict.Remove(sourceItem);
             targets.Remove(targetItem);
@@ -123,19 +122,21 @@ namespace Jewelry.Collections
                 _target = target;
             }
 
-            public void OnCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+            public void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
             {
                 switch (e.Action)
                 {
                     case NotifyCollectionChangedAction.Add:
-                        foreach (TSource item in e.NewItems)
-                            _parent.AddHierarchy(_parent.GetTargetChildren(_target), item);
+                        if (e.NewItems is not null)
+                            foreach (TSource item in e.NewItems)
+                                _parent.AddHierarchy(_parent.GetTargetChildren(_target), item);
 
                         break;
 
                     case NotifyCollectionChangedAction.Remove:
-                        foreach (TSource item in e.OldItems)
-                            _parent.RemoveHierarchy(_parent.GetTargetChildren(_target), item);
+                        if (e.OldItems is not null)
+                            foreach (TSource item in e.OldItems)
+                                _parent.RemoveHierarchy(_parent.GetTargetChildren(_target), item);
 
                         break;
 
@@ -160,7 +161,7 @@ namespace Jewelry.Collections
                 Func<TSource, INotifyCollectionChanged> getSourceChildren,
                 Func<TTarget, Collection<TTarget>> getTargetChildren,
                 bool disposeElement = true)
-            => new HierarchicalMappingCollection<TSource, TTarget>(
-                self, converter, getSourceChildren, getTargetChildren, disposeElement);
+            where TSource : notnull
+            => new(self, converter, getSourceChildren, getTargetChildren, disposeElement);
     }
 }

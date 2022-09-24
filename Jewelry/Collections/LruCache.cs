@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 namespace Jewelry.Collections
 {
     public class ThreadSafeLruCache<TKey, TValue> : LruCacheBase<TKey, TValue, LruCacheBase.IsThreadSafe>
+        where TKey : notnull
     {
         public ThreadSafeLruCache(int maxCapacity)
             : base(maxCapacity)
@@ -13,6 +14,7 @@ namespace Jewelry.Collections
     }
 
     public class LruCache<TKey, TValue> : LruCacheBase<TKey, TValue, LruCacheBase.IsNotThreadSafe>
+        where TKey : notnull
     {
         public LruCache(int maxCapacity)
             : base(maxCapacity)
@@ -21,6 +23,7 @@ namespace Jewelry.Collections
     }
 
     public class LruCacheBase<TKey, TValue, TIsThreadSafe>
+        where TKey : notnull
     {
         public LruCacheBase(int maxCapacity)
         {
@@ -171,7 +174,7 @@ namespace Jewelry.Collections
                 return true;
             }
 
-            value = default;
+            value = default!;
             return false;
         }
 
@@ -218,7 +221,7 @@ namespace Jewelry.Collections
             }
             else
             {
-                var keyValue = new KeyValue {Key = key, Value = value};
+                var keyValue = new KeyValue { Key = key, Value = value };
 
                 listNode = _list.AddFirst(keyValue);
 
@@ -229,7 +232,7 @@ namespace Jewelry.Collections
 
             while (_currentSize > _maxCapacity)
             {
-                var valueNode = _list.Last;
+                var valueNode = _list.Last ?? throw new NullReferenceException();
 
                 _list.RemoveLast();
                 _lookup.Remove(valueNode.Value.Key);
@@ -255,12 +258,12 @@ namespace Jewelry.Collections
 
         private class KeyValue
         {
-            public TKey Key { get; set; }
-            public TValue Value { get; set; }
+            public TKey Key { get; set; } = default!;
+            public TValue Value { get; set; } = default!;
         }
 
-        private readonly LinkedList<KeyValue> _list = new LinkedList<KeyValue>();
-        private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup = new Dictionary<TKey, LinkedListNode<KeyValue>>();
+        private readonly LinkedList<KeyValue> _list = new();
+        private readonly Dictionary<TKey, LinkedListNode<KeyValue>> _lookup = new();
         private readonly object? _lockObj;
         private readonly int _maxCapacity;
         private int _currentSize;

@@ -58,7 +58,7 @@ namespace Jewelry.Memory
             var toReturn = _arrayToReturnToPool;
             this = default;
 
-            if (toReturn != null)
+            if (toReturn is not null)
                 ArrayPool<T>.Shared.Return(toReturn);
         }
 
@@ -109,13 +109,13 @@ namespace Jewelry.Memory
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T FirstOrDefault()
         {
-            return Length != 0 ? _buffer[0] : default;
+            return Length != 0 ? _buffer[0] : default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public T LastOrDefault()
         {
-            return Length != 0 ? _buffer[_pos - 1] : default;
+            return Length != 0 ? _buffer[_pos - 1] : default!;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -133,7 +133,7 @@ namespace Jewelry.Memory
             _arrayToReturnToPool = nextBuffer;
             _buffer = nextBuffer;
 
-            if (toReturn != null)
+            if (toReturn is not null)
                 ArrayPool<T>.Shared.Return(toReturn);
         }
     }

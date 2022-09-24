@@ -14,7 +14,7 @@ namespace Jewelry.Text
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
             public string ToString(string? src)
             {
-                return src == null ? string.Empty : ToSpan(src.AsSpan()).ToString();
+                return src is null ? string.Empty : ToSpan(src.AsSpan()).ToString();
             }
 
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -43,14 +43,14 @@ namespace Jewelry.Text
             var toReturn = _arrayToReturnToPool;
             this = default;
 
-            if (toReturn != null)
+            if (toReturn is not null)
                 ArrayPool<StringSpan>.Shared.Return(toReturn);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<StringSpan> Split(string? text, char separator, StringSplitOptions options = StringSplitOptions.None)
         {
-            if (text == null)
+            if (text is null)
                 return ReadOnlySpan<StringSpan>.Empty;
 
             return Split(text.AsSpan(), separator, options);
@@ -115,7 +115,7 @@ namespace Jewelry.Text
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public ReadOnlySpan<StringSpan> Split(string? text, ReadOnlySpan<char> separators, StringSplitOptions options = StringSplitOptions.None)
         {
-            if (text == null)
+            if (text is null)
                 return ReadOnlySpan<StringSpan>.Empty;
 
             return Split(text.AsSpan(), separators, options);
@@ -189,7 +189,7 @@ namespace Jewelry.Text
             _arrayToReturnToPool = nextBuffer;
             _buffer = nextBuffer;
 
-            if (toReturn != null)
+            if (toReturn is not null)
                 ArrayPool<StringSpan>.Shared.Return(toReturn);
         }
 

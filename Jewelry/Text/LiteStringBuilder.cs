@@ -218,16 +218,16 @@ namespace Jewelry.Text
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void AppendIfNotNull(string? s)
         {
-            if (s == null)
+            if (s is null)
                 return;
 
             Append(s);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void AppendLineIfNotNull(string s)
+        public void AppendLineIfNotNull(string? s)
         {
-            if (s != null)
+            if (s is not null)
                 Append(s);
 
             AppendNewLine();
@@ -401,7 +401,7 @@ retry:
 
             char[]? toReturn = _arrayToReturnToPool;
             _chars = _arrayToReturnToPool = poolArray;
-            if (toReturn != null)
+            if (toReturn is not null)
             {
                 ArrayPool<char>.Shared.Return(toReturn);
             }
@@ -412,7 +412,7 @@ retry:
         {
             char[]? toReturn = _arrayToReturnToPool;
             this = default; // for safety, to avoid using pooled array if this instance is erroneously appended to again
-            if (toReturn != null)
+            if (toReturn is not null)
             {
                 ArrayPool<char>.Shared.Return(toReturn);
             }
