@@ -3,118 +3,109 @@ using Xunit;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Jewelry.Test.Collections
+namespace Jewelry.Test.Collections;
+
+public class LruCacheTest
 {
-    public class LruCacheTest
+    private class StringLruCache() : LruCache<string, string>(25)
     {
-        public class StringLruCache : LruCache<string, string>
+        public int DiscardedValueCount
         {
-            public int DiscardedValueCount
-            {
-                get;
-                set;
-            }
-            
-            public StringLruCache() : base(25)
-            {
-            }
-
-            protected override int GetValueSize(string value)
-            {
-                return value.Length;
-            }
-
-            protected override void OnDiscardedValue(string key, string value)
-            {
-                ++ DiscardedValueCount;
-            }
+            get;
+            set;
         }
-        
-        [Fact]
-        public void Basic()
+
+        protected override int GetValueSize(string value)
         {
-            var cache = new StringLruCache();
+            return value.Length;
+        }
+
+        protected override void OnDiscardedValue(string key, string value)
+        {
+            ++ DiscardedValueCount;
+        }
+    }
+        
+    [Fact]
+    public void Basic()
+    {
+        var cache = new StringLruCache();
  
-            cache.Add("key0", "0123456789");
+        cache.Add("key0", "0123456789");
 
-            Assert.Equal( "0123456789", cache.Get("key0"));
-            Assert.Null(cache.Get("key1"));
+        Assert.Equal( "0123456789", cache.Get("key0"));
+        Assert.Null(cache.Get("key1"));
 
-            cache.Add("key1", "ABCDEFGHIJ");
+        cache.Add("key1", "ABCDEFGHIJ");
 
-            Assert.Equal("0123456789", cache.Get("key0"));
-            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+        Assert.Equal("0123456789", cache.Get("key0"));
+        Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
 
-            cache.Add("key2", "1122334455");
+        cache.Add("key2", "1122334455");
 
-            Assert.Null(cache.Get("key0"));
-            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
-            Assert.Equal("1122334455", cache.Get("key2"));
-            Assert.Equal(1, cache.DiscardedValueCount);
+        Assert.Null(cache.Get("key0"));
+        Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+        Assert.Equal("1122334455", cache.Get("key2"));
+        Assert.Equal(1, cache.DiscardedValueCount);
 
-            // ReSharper disable once UnusedVariable
-            var touch = cache.Get("key1");
-            cache.Add("key3", "6677889900");
+        // ReSharper disable once UnusedVariable
+        var touch = cache.Get("key1");
+        cache.Add("key3", "6677889900");
 
-            Assert.Null(cache.Get("key0"));
-            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
-            Assert.Null(cache.Get("key2"));
-            Assert.Equal("6677889900", cache.Get("key3"));
-        }
-        
-        public class ThreadSafeStringLruCache : ThreadSafeLruCache<string, string>
+        Assert.Null(cache.Get("key0"));
+        Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+        Assert.Null(cache.Get("key2"));
+        Assert.Equal("6677889900", cache.Get("key3"));
+    }
+
+    private class ThreadSafeStringLruCache() : ThreadSafeLruCache<string, string>(25)
+    {
+        public int DiscardedValueCount
         {
-            public int DiscardedValueCount
-            {
-                get;
-                set;
-            }
-            
-            public ThreadSafeStringLruCache() : base(25)
-            {
-            }
-
-            protected override int GetValueSize(string value)
-            {
-                return value.Length;
-            }
-
-            protected override void OnDiscardedValue(string key, string value)
-            {
-                ++ DiscardedValueCount;
-            }
+            get;
+            set;
         }
-        
-        [Fact]
-        public void ThreadBasic()
+
+        protected override int GetValueSize(string value)
         {
-            var cache = new ThreadSafeStringLruCache();
+            return value.Length;
+        }
+
+        protected override void OnDiscardedValue(string key, string value)
+        {
+            ++ DiscardedValueCount;
+        }
+    }
+        
+    [Fact]
+    public void ThreadBasic()
+    {
+        var cache = new ThreadSafeStringLruCache();
  
-            cache.Add("key0", "0123456789");
+        cache.Add("key0", "0123456789");
 
-            Assert.Equal( "0123456789", cache.Get("key0"));
-            Assert.Null(cache.Get("key1"));
+        Assert.Equal( "0123456789", cache.Get("key0"));
+        Assert.Null(cache.Get("key1"));
 
-            cache.Add("key1", "ABCDEFGHIJ");
+        cache.Add("key1", "ABCDEFGHIJ");
 
-            Assert.Equal("0123456789", cache.Get("key0"));
-            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+        Assert.Equal("0123456789", cache.Get("key0"));
+        Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
 
-            cache.Add("key2", "1122334455");
+        cache.Add("key2", "1122334455");
 
-            Assert.Null(cache.Get("key0"));
-            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
-            Assert.Equal("1122334455", cache.Get("key2"));
-            Assert.Equal(1, cache.DiscardedValueCount);
+        Assert.Null(cache.Get("key0"));
+        Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+        Assert.Equal("1122334455", cache.Get("key2"));
+        Assert.Equal(1, cache.DiscardedValueCount);
 
-            // ReSharper disable once UnusedVariable
-            var touch = cache.Get("key1");
-            cache.Add("key3", "6677889900");
+        // ReSharper disable once UnusedVariable
+        var touch = cache.Get("key1");
+        cache.Add("key3", "6677889900");
 
-            Assert.Null(cache.Get("key0"));
-            Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
-            Assert.Null(cache.Get("key2"));
-            Assert.Equal("6677889900", cache.Get("key3"));
-        }
+        Assert.Null(cache.Get("key0"));
+        Assert.Equal("ABCDEFGHIJ", cache.Get("key1"));
+        Assert.Null(cache.Get("key2"));
+        Assert.Equal("6677889900", cache.Get("key3"));
     }
 }

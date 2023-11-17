@@ -6,150 +6,149 @@ using Xunit;
 
 // ReSharper disable StringLiteralTypo
 
-namespace Jewelry.Test.Text
+namespace Jewelry.Test.Text;
+
+[SuppressMessage("ReSharper", "PossiblyImpureMethodCallOnReadonlyVariable")]
+public class LiteStringBuilderTest
 {
-    [SuppressMessage("ReSharper", "PossiblyImpureMethodCallOnReadonlyVariable")]
-    public class LiteStringBuilderTest
+    [Fact]
+    public void Smoke()
     {
-        [Fact]
-        public void Smoke()
-        {
-            using var lsb = new LiteStringBuilder();
-        }
+        using var lsb = new LiteStringBuilder();
+    }
 
-        [Fact]
-        public void Simple()
-        {
-            using var lsb = new LiteStringBuilder();
+    [Fact]
+    public void Simple()
+    {
+        using var lsb = new LiteStringBuilder();
 
-            lsb.Append("aaa");
-            lsb.Append("bbb");
+        lsb.Append("aaa");
+        lsb.Append("bbb");
 
-            Assert.Equal("aaabbb", lsb.ToString());
-        }
+        Assert.Equal("aaabbb", lsb.ToString());
+    }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(100)]
-        public void StackSimple(int size)
-        {
-            using var lsb = new LiteStringBuilder(stackalloc char[size]);
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    public void StackSimple(int size)
+    {
+        using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append("aaa");
-            lsb.Append("bbb");
+        lsb.Append("aaa");
+        lsb.Append("bbb");
 
-            Assert.Equal("aaabbb", lsb.ToString());
-        }
+        Assert.Equal("aaabbb", lsb.ToString());
+    }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(100)]
-        public void ArrayPoolSimple(int size)
-        {
-            using var lsb = new LiteStringBuilder(size);
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    public void ArrayPoolSimple(int size)
+    {
+        using var lsb = new LiteStringBuilder(size);
 
-            lsb.Append("aaa");
-            lsb.Append("bbb");
+        lsb.Append("aaa");
+        lsb.Append("bbb");
 
-            Assert.Equal("aaabbb", lsb.ToString());
-        }
+        Assert.Equal("aaabbb", lsb.ToString());
+    }
 
-        [Fact]
-        public void AppendIfNotNull()
-        {
-            using var lsb = new LiteStringBuilder();
+    [Fact]
+    public void AppendIfNotNull()
+    {
+        using var lsb = new LiteStringBuilder();
 
-            lsb.AppendIfNotNull("aaa");
-            lsb.AppendIfNotNull(null);
-            lsb.AppendIfNotNull("bbb");
+        lsb.AppendIfNotNull("aaa");
+        lsb.AppendIfNotNull(null);
+        lsb.AppendIfNotNull("bbb");
 
-            Assert.Equal("aaabbb", lsb.ToString());
+        Assert.Equal("aaabbb", lsb.ToString());
 
 
-            var a = new StringBuilder();
+        var a = new StringBuilder();
 
-            a.AppendLine("aaa");
-        }
+        a.AppendLine("aaa");
+    }
 
-        [Fact]
-        public void AppendLine()
-        {
-            using var lsb = new LiteStringBuilder();
+    [Fact]
+    public void AppendLine()
+    {
+        using var lsb = new LiteStringBuilder();
 
-            lsb.AppendLine("aaa");
-            lsb.AppendLine("bbb");
+        lsb.AppendLine("aaa");
+        lsb.AppendLine("bbb");
 
-            Assert.Equal("aaa\r\nbbb\r\n", lsb.ToString());
-        }
+        Assert.Equal("aaa\r\nbbb\r\n", lsb.ToString());
+    }
 
-        [Fact]
-        public void AppendLineIfNotNull()
-        {
-            using var lsb = new LiteStringBuilder();
+    [Fact]
+    public void AppendLineIfNotNull()
+    {
+        using var lsb = new LiteStringBuilder();
 
-            lsb.AppendLine("aaa");
-            lsb.AppendLineIfNotNull(null);
-            lsb.AppendLine("bbb");
+        lsb.AppendLine("aaa");
+        lsb.AppendLineIfNotNull(null);
+        lsb.AppendLine("bbb");
 
-            Assert.Equal("aaa\r\n\r\nbbb\r\n", lsb.ToString());
-        }
+        Assert.Equal("aaa\r\n\r\nbbb\r\n", lsb.ToString());
+    }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(100)]
-        public void AppendInt(int size)
-        {
-            using var lsb = new LiteStringBuilder(stackalloc char[size]);
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    public void AppendInt(int size)
+    {
+        using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append(1);
-            lsb.Append(234);
-            lsb.Append(56);
+        lsb.Append(1);
+        lsb.Append(234);
+        lsb.Append(56);
 
-            Assert.Equal("123456", lsb.ToString());
-        }
+        Assert.Equal("123456", lsb.ToString());
+    }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(100)]
-        public void AppendIntFormat(int size)
-        {
-            using var lsb = new LiteStringBuilder(stackalloc char[size]);
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    public void AppendIntFormat(int size)
+    {
+        using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append(1, "D4".AsSpan());
+        lsb.Append(1, "D4".AsSpan());
 
-            Assert.Equal("0001", lsb.ToString());
-        }
+        Assert.Equal("0001", lsb.ToString());
+    }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(100)]
-        public void AppendDouble(int size)
-        {
-            using var lsb = new LiteStringBuilder(stackalloc char[size]);
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    public void AppendDouble(int size)
+    {
+        using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append(1.5);
-            lsb.Append(2);
-            lsb.Append(56);
+        lsb.Append(1.5);
+        lsb.Append(2);
+        lsb.Append(56);
 
-            Assert.Equal("1.5256", lsb.ToString());
-        }
+        Assert.Equal("1.5256", lsb.ToString());
+    }
 
-        [Theory]
-        [InlineData(0)]
-        [InlineData(1)]
-        [InlineData(100)]
-        public void AppendDoubleFormat(int size)
-        {
-            using var lsb = new LiteStringBuilder(stackalloc char[size]);
+    [Theory]
+    [InlineData(0)]
+    [InlineData(1)]
+    [InlineData(100)]
+    public void AppendDoubleFormat(int size)
+    {
+        using var lsb = new LiteStringBuilder(stackalloc char[size]);
 
-            lsb.Append(1.5, "F3".AsSpan());
+        lsb.Append(1.5, "F3".AsSpan());
 
-            Assert.Equal("1.500", lsb.ToString());
-        }
+        Assert.Equal("1.500", lsb.ToString());
     }
 }
