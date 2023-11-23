@@ -188,8 +188,11 @@ public class HierarchicalNode<T>
         var insertIndex = SpanHelper.UpperBound<T, string>(
             _children.AsSpan(),
             itemPathLeaf,
-            (l, r) => string.Compare(Root.GetPath(l), r, StringComparison.OrdinalIgnoreCase)
-        );
+            (l, r) =>
+            {
+                (_, var pathLeaf) = PickFolderPath(Root.GetPath(l));
+                return string.Compare(pathLeaf, r, StringComparison.OrdinalIgnoreCase);
+            });
 
         _children.Insert(insertIndex, item);
     }

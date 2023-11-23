@@ -338,4 +338,29 @@ public class ReadOnlyObservableHierarchicalCollectionTest
         Assert.Equal("yyy", sut.Folders[1].Path);
         Assert.Equal("zzz", sut.Folders[2].Path);
     }
+    
+    [Fact]
+    public void SortSubFolder()
+    {
+        var source = new ObservableCollection<Data>
+        {
+            new() { Path = "aaa/zzz/name7", Param = 7 },
+            new() { Path = "aaa/zzz/name6", Param = 6 },
+            new() { Path = "aaa/yyy/name5", Param = 5 },
+            new() { Path = "aaa/yyy/name4", Param = 4 },
+            new() { Path = "aaa/xxx/name3", Param = 3 },
+            new() { Path = "aaa/xxx/name2", Param = 2 },
+            new() { Path = "aaa/name1", Param = 1 },
+            new() { Path = "name0", Param = 0 },
+        };
+        
+        using var sut = source.ToReadOnlyObservableHierarchicalCollection(static x => x.Path);
+        
+        Assert.Equal("aaa/xxx", sut.Folders[0].Folders[0].Path);
+        Assert.Equal("aaa/yyy", sut.Folders[0].Folders[1].Path);
+        Assert.Equal("aaa/zzz", sut.Folders[0].Folders[2].Path);
+        
+        Assert.Equal("aaa/xxx/name2", sut.Folders[0].Folders[0].Children[0].Path);
+        Assert.Equal("aaa/xxx/name3", sut.Folders[0].Folders[0].Children[1].Path);
+    }
 }
