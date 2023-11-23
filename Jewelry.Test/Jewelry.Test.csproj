@@ -5,7 +5,7 @@
 
     <AssemblyName>Jewelry.Test</AssemblyName>
     <LangVersion>latest</LangVersion>
-    <TargetFrameworks>net472;net48;net6.0;net7.0;netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
