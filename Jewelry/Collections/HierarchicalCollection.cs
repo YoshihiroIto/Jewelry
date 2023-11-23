@@ -134,6 +134,7 @@ public sealed class ReadOnlyObservableHierarchicalCollection<T> : HierarchicalNo
 public class HierarchicalNode<T>
 {
     public string Path { get; }
+    public string PathLeaf { get; }
 
     public ReadOnlyObservableCollection<HierarchicalNode<T>> Folders { get; }
     public ReadOnlyObservableCollection<T> Children { get; }
@@ -151,6 +152,7 @@ public class HierarchicalNode<T>
     internal HierarchicalNode()
     {
         Path = "";
+        PathLeaf = "";
 
         Folders = new(_folders);
         Children = new(_children);
@@ -161,6 +163,7 @@ public class HierarchicalNode<T>
         _parent = parent;
         _root = root;
         Path = path;
+        (_, PathLeaf) = PickFolderPath(Path);
 
         Folders = new(_folders);
         Children = new(_children);
@@ -173,11 +176,7 @@ public class HierarchicalNode<T>
         var insertIndex = SpanHelper.UpperBound<HierarchicalNode<T>, string>(
             _folders.AsSpan(),
             folderPathLeaf,
-            (l, r) =>
-            {
-                var (_, pathLeaf) = PickFolderPath(l.Path);
-                return string.Compare(pathLeaf, r, StringComparison.OrdinalIgnoreCase);
-            });
+            (l, r) => string.Compare(l.PathLeaf, r, StringComparison.OrdinalIgnoreCase));
 
         _folders.Insert(insertIndex, folder);
 
@@ -231,7 +230,7 @@ public static class ReadOnlyObservableHierarchicalCollectionExtensions
     {
         return new ReadOnlyObservableHierarchicalCollection<T>(source, source, getPath);
     }
-    
+
     public static ReadOnlyObservableHierarchicalCollection<T> ToReadOnlyObservableHierarchicalCollection<T>(
         this ObservableCollection<T> source,
         Func<T, string> getPath)
