@@ -236,8 +236,7 @@ public ref struct LiteStringBuilder
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AppendNewLine()
     {
-        Append('\r');
-        Append('\n');
+        Append(Environment.NewLine);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

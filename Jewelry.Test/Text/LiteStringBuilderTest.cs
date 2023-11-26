@@ -81,7 +81,7 @@ public class LiteStringBuilderTest
         lsb.AppendLine("aaa");
         lsb.AppendLine("bbb");
 
-        Assert.Equal("aaa\r\nbbb\r\n", lsb.ToString());
+        Assert.Equal($"aaa{Environment.NewLine}bbb{Environment.NewLine}", lsb.ToString());
     }
 
     [Fact]
@@ -93,7 +93,7 @@ public class LiteStringBuilderTest
         lsb.AppendLineIfNotNull(null);
         lsb.AppendLine("bbb");
 
-        Assert.Equal("aaa\r\n\r\nbbb\r\n", lsb.ToString());
+        Assert.Equal($"aaa{Environment.NewLine}{Environment.NewLine}bbb{Environment.NewLine}", lsb.ToString());
     }
 
     [Theory]
