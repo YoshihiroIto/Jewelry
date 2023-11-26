@@ -71,6 +71,7 @@ public ref struct LiteStringBuilder
             EnsureCapacity(Length + 1);
             _chars[Length] = '\0';
         }
+
         return ref MemoryMarshal.GetReference(_chars);
     }
 
@@ -90,6 +91,23 @@ public ref struct LiteStringBuilder
         return s;
     }
 
+    public string ToStringWithoutLastNewLine()
+    {
+        if (_pos >= Environment.NewLine.Length)
+        {
+            var lastNewLine = _chars.Slice(_pos - Environment.NewLine.Length, Environment.NewLine.Length);
+
+            if (lastNewLine.SequenceEqual(Environment.NewLine.AsSpan()))
+            {
+                var s = _chars[..(_pos - Environment.NewLine.Length)].ToString();
+                Dispose();
+                return s;
+            }
+        }
+
+        return ToString();
+    }
+
     /// <summary>Returns the underlying storage of the builder.</summary>
     public Span<char> RawChars => _chars;
 
@@ -104,6 +122,7 @@ public ref struct LiteStringBuilder
             EnsureCapacity(Length + 1);
             _chars[Length] = '\0';
         }
+
         return _chars[.._pos];
     }
 
@@ -174,7 +193,9 @@ public ref struct LiteStringBuilder
     public void Append(string s)
     {
         int pos = _pos;
-        if (s.Length == 1 && (uint)pos < (uint)_chars.Length) // very common case, e.g. appending strings from NumberFormatInfo like separators, percent symbols, etc.
+        if (s.Length == 1 &&
+            (uint)pos < (uint)_chars
+                .Length) // very common case, e.g. appending strings from NumberFormatInfo like separators, percent symbols, etc.
         {
             _chars[pos] = s[0];
             _pos = pos + 1;
@@ -248,7 +269,7 @@ public ref struct LiteStringBuilder
             Grow(32);
             goto retry;
         }
-                
+
         _pos += charsWritten;
     }
 
@@ -261,7 +282,7 @@ public ref struct LiteStringBuilder
             Grow(32);
             goto retry;
         }
-                
+
         _pos += charsWritten;
     }
 
@@ -274,7 +295,7 @@ public ref struct LiteStringBuilder
             Grow(32);
             goto retry;
         }
-                
+
         _pos += charsWritten;
     }
 
@@ -287,7 +308,7 @@ public ref struct LiteStringBuilder
             Grow(32);
             goto retry;
         }
-                
+
         _pos += charsWritten;
     }
 
@@ -303,6 +324,7 @@ public ref struct LiteStringBuilder
         {
             dst[i] = c;
         }
+
         _pos += count;
     }
 
@@ -362,7 +384,8 @@ public ref struct LiteStringBuilder
     private void Grow(int additionalCapacityBeyondPos)
     {
         Debug.Assert(additionalCapacityBeyondPos > 0);
-        Debug.Assert(_pos > _chars.Length - additionalCapacityBeyondPos, "Grow called incorrectly, no resize is needed.");
+        Debug.Assert(_pos > _chars.Length - additionalCapacityBeyondPos,
+            "Grow called incorrectly, no resize is needed.");
 
         char[] poolArray = ArrayPool<char>.Shared.Rent(Math.Max(_pos + additionalCapacityBeyondPos, _chars.Length * 2));
 
