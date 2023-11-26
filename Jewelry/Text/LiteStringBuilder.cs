@@ -85,7 +85,7 @@ public ref struct LiteStringBuilder
 
     public override string ToString()
     {
-        var s = _chars.Slice(0, _pos).ToString();
+        var s = _chars[.._pos].ToString();
         Dispose();
         return s;
     }
@@ -104,16 +104,16 @@ public ref struct LiteStringBuilder
             EnsureCapacity(Length + 1);
             _chars[Length] = '\0';
         }
-        return _chars.Slice(0, _pos);
+        return _chars[.._pos];
     }
 
-    public ReadOnlySpan<char> AsSpan() => _chars.Slice(0, _pos);
+    public ReadOnlySpan<char> AsSpan() => _chars[.._pos];
     public ReadOnlySpan<char> AsSpan(int start) => _chars.Slice(start, _pos - start);
     public ReadOnlySpan<char> AsSpan(int start, int length) => _chars.Slice(start, length);
 
     public bool TryCopyTo(Span<char> destination, out int charsWritten)
     {
-        if (_chars.Slice(0, _pos).TryCopyTo(destination))
+        if (_chars[.._pos].TryCopyTo(destination))
         {
             charsWritten = _pos;
             Dispose();
@@ -135,7 +135,7 @@ public ref struct LiteStringBuilder
         }
 
         int remaining = _pos - index;
-        _chars.Slice(index, remaining).CopyTo(_chars.Slice(index + count));
+        _chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
         _chars.Slice(index, count).Fill(value);
         _pos += count;
     }
@@ -150,8 +150,8 @@ public ref struct LiteStringBuilder
         }
 
         int remaining = _pos - index;
-        _chars.Slice(index, remaining).CopyTo(_chars.Slice(index + count));
-        s.AsSpan().CopyTo(_chars.Slice(index));
+        _chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
+        s.AsSpan().CopyTo(_chars[index..]);
         _pos += count;
     }
 
@@ -239,87 +239,57 @@ public ref struct LiteStringBuilder
         Append('\r');
         Append('\n');
     }
-        
-#if NETSTANDARD2_0
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Append(short v, string format) => Append(v, format.AsSpan());
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Append(int v, string format) => Append(v, format.AsSpan());
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Append(float v, string format) => Append(v, format.AsSpan());
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void Append(double v, string format) => Append(v, format.AsSpan());
-#endif
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Append(short v, ReadOnlySpan<char> format = default)
     {
-#if NETSTANDARD2_0
-            Append(v.ToString(format.ToString()));
-#else
         retry:
-        if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
+        if (v.TryFormat(_chars[_pos..], out var charsWritten, format) == false)
         {
             Grow(32);
             goto retry;
         }
                 
         _pos += charsWritten;
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Append(int v, ReadOnlySpan<char> format = default)
     {
-#if NETSTANDARD2_0
-            Append(v.ToString(format.ToString()));
-#else
         retry:
-        if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
+        if (v.TryFormat(_chars[_pos..], out var charsWritten, format) == false)
         {
             Grow(32);
             goto retry;
         }
                 
         _pos += charsWritten;
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Append(float v, ReadOnlySpan<char> format = default)
     {
-#if NETSTANDARD2_0
-            Append(v.ToString(format.ToString()));
-#else
         retry:
-        if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
+        if (v.TryFormat(_chars[_pos..], out var charsWritten, format) == false)
         {
             Grow(32);
             goto retry;
         }
                 
         _pos += charsWritten;
-#endif
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Append(double v, ReadOnlySpan<char> format = default)
     {
-#if NETSTANDARD2_0
-            Append(v.ToString(format.ToString()));
-#else
         retry:
-        if (v.TryFormat(_chars.Slice(_pos), out var charsWritten, format) == false)
+        if (v.TryFormat(_chars[_pos..], out var charsWritten, format) == false)
         {
             Grow(32);
             goto retry;
         }
                 
         _pos += charsWritten;
-#endif
     }
 
     public void Append(char c, int count)
@@ -345,7 +315,7 @@ public ref struct LiteStringBuilder
             Grow(value.Length);
         }
 
-        value.CopyTo(_chars.Slice(_pos));
+        value.CopyTo(_chars[_pos..]);
         _pos += value.Length;
     }
 
@@ -377,7 +347,7 @@ public ref struct LiteStringBuilder
             Grow(s.Length);
         }
 
-        s.AsSpan().CopyTo(_chars.Slice(pos));
+        s.AsSpan().CopyTo(_chars[pos..]);
         _pos += s.Length;
     }
 

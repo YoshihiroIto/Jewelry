@@ -102,16 +102,6 @@ public ref struct StringSplitter
         return _buffer.Slice(0, count);
     }
         
-#if NETSTANDARD2_0
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public ReadOnlySpan<StringSpan> Split(string? text, string separators, StringSplitOptions options = StringSplitOptions.None)
-            => Split(text, separators.AsSpan(), options);
-        
-        public ReadOnlySpan<StringSpan> Split(ReadOnlySpan<char> text, string separators, StringSplitOptions options = StringSplitOptions.None)
-            => Split(text, separators.AsSpan(), options);
-#endif
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<StringSpan> Split(string? text, ReadOnlySpan<char> separators, StringSplitOptions options = StringSplitOptions.None)
     {
