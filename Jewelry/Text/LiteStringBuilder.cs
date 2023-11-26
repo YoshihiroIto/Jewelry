@@ -221,7 +221,7 @@ public ref struct LiteStringBuilder
         if (putEmptyNewLine || string.IsNullOrEmpty(s) == false)
             AppendNewLine();
     }
-
+    
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AppendLine(IEnumerable<string> ss, bool putEmptyNewLine = true)
     {
@@ -338,6 +338,12 @@ public ref struct LiteStringBuilder
 
         value.CopyTo(_chars[_pos..]);
         _pos += value.Length;
+    }
+    
+    public void AppendLine(ReadOnlySpan<char> value)
+    {
+        Append(value);
+        AppendNewLine();
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
