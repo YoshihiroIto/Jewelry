@@ -1,0 +1,51 @@
+name: Build App
+
+on:
+  push:
+    branches: ['master']
+  pull_request:
+    branches: ['master']
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+
+    env:
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Checkout submodules
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          token: ${{secrets.SUBMODULE_TOKEN}}
+          submodules: true
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ github.workspace }}/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ matrix.dotnet-version }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: dotnet restore Jewelry.sln --locked-mode
+
+      - name: Build
+        run: dotnet build Jewelry.sln --configuration ${{ matrix.configuration }} --no-restore
+
+      - name: Test
+        run: dotnet test Jewelry.sln --configuration ${{ matrix.configuration }} --no-build
