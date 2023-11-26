@@ -22,13 +22,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Checkout submodules
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-          token: ${{secrets.SUBMODULE_TOKEN}}
-          submodules: true
-
       - name: Setup .NET 8
         uses: actions/setup-dotnet@v3
         with:
