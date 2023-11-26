@@ -4,7 +4,7 @@
         <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
         <PackageLicenseFile>README.md</PackageLicenseFile>
         <Copyright>Copyright (c) 2019-2023 copyright Yoshihiro Ito (yo.i.jewelry.bab@gmail.com)</Copyright>
-        <Version>2.0.15</Version>
+        <Version>2.0.16</Version>
         <Authors>Yoshihiro Ito</Authors>
         <Company>Jewelry</Company>
         <PackageProjectUrl>https://github.com/YoshihiroIto/Jewelry</PackageProjectUrl>
@@ -13,7 +13,7 @@
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <FileVersion>2.0.0.0</FileVersion>
         <Description>.NET support</Description>
-        <PackageVersion>2.0.15</PackageVersion>
+        <PackageVersion>2.0.16</PackageVersion>
         <LangVersion>latest</LangVersion>
         <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
