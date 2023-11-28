@@ -93,19 +93,9 @@ public ref struct LiteStringBuilder
 
     public string ToStringWithoutLastNewLine()
     {
-        if (_pos >= Environment.NewLine.Length)
-        {
-            var lastNewLine = _chars.Slice(_pos - Environment.NewLine.Length, Environment.NewLine.Length);
-
-            if (lastNewLine.SequenceEqual(Environment.NewLine.AsSpan()))
-            {
-                var s = _chars[..(_pos - Environment.NewLine.Length)].ToString();
-                Dispose();
-                return s;
-            }
-        }
-
-        return ToString();
+        var s = _chars[.._pos].TrimEnd(Environment.NewLine).ToString();
+        Dispose();
+        return s;
     }
 
     /// <summary>Returns the underlying storage of the builder.</summary>
@@ -221,7 +211,7 @@ public ref struct LiteStringBuilder
         if (putEmptyNewLine || string.IsNullOrEmpty(s) == false)
             AppendNewLine();
     }
-    
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void AppendLine(IEnumerable<string> ss, bool putEmptyNewLine = true)
     {
@@ -339,7 +329,7 @@ public ref struct LiteStringBuilder
         value.CopyTo(_chars[_pos..]);
         _pos += value.Length;
     }
-    
+
     public void AppendLine(ReadOnlySpan<char> value)
     {
         Append(value);
