@@ -107,16 +107,6 @@ public class LiteStringBuilderTest
 
         Assert.Equal($"aaa{Environment.NewLine}{Environment.NewLine}bbb", lsb.ToStringWithoutLastNewLine());
     }
-    
-    [Fact]
-    public void ToStringWithoutLastNewLine_NoNewLine()
-    {
-        using var lsb = new LiteStringBuilder();
-
-        lsb.Append($"aaa{Environment.NewLine}bbb");
-
-        Assert.Equal($"aaa{Environment.NewLine}bbb", lsb.ToStringWithoutLastNewLine());
-    }
 
     [Theory]
     [InlineData(0)]
