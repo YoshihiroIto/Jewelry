@@ -19,6 +19,19 @@ public readonly struct Sha1
 
     public override string ToString()
     {
-        return $"{_value0:x32}{_value1:x8}";
+        return string.Create(40, this, (span, t) =>
+        {
+            for (var i = 0; i != 32; i++)
+            {
+                var c = (t._value0 >> ((31 - i) * 4)) & 0x0F;
+                span[i] = c < 10 ? (char)('0' + c) : (char)('a' + c - 10);
+            }
+
+            for (var i = 0; i != 8; i++)
+            {
+                var c = (t._value1 >> ((7 - i) * 4)) & 0x0F;
+                span[32 + i] = c < 10 ? (char)('0' + c) : (char)('a' + c - 10);
+            }
+        });
     }
 }
