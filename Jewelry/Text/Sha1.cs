@@ -35,6 +35,43 @@ public readonly struct Sha1
             }
         });
     }
+    
+    public string ToShortString(int length)
+    {
+        if (length < 0)
+            throw new ArgumentOutOfRangeException();
+        
+        if (length > 40)
+            throw new ArgumentOutOfRangeException();
+        
+        if (length == 0)
+            return "";
+        
+        return string.Create(length, this, static (span, t) =>
+        {
+            var count = 0;
+            
+            for (var i = 0; i != 32; i++)
+            {
+                var c = (t._value0 >> ((31 - i) * 4)) & 0x0F;
+                span[i] = c < 10 ? (char)('0' + c) : (char)('a' + c - 10);
+
+                ++count;
+                if(count == span.Length)
+                    return;
+            }
+
+            for (var i = 0; i != 8; i++)
+            {
+                var c = (t._value1 >> ((7 - i) * 4)) & 0x0F;
+                span[32 + i] = c < 10 ? (char)('0' + c) : (char)('a' + c - 10);
+                
+                ++count;
+                if(count == span.Length)
+                    return;
+            }
+        });
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(Sha1 left, Sha1 right)
