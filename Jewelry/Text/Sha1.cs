@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace Jewelry.Text;
 
-public readonly struct Sha1
+public readonly struct Sha1 : IEquatable<Sha1>
 {
     private readonly UInt128 _value0;
     private readonly uint _value1;
