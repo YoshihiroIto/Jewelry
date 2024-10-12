@@ -81,6 +81,6 @@ public readonly ref struct PooledArray<T>
             return;
 
         System.Array.Clear(Array, 0, Length);
-        ArrayPool<T>.Shared.Return(Array);
+        ArrayPool<T>.Shared.Return(Array, typeof(T).IsValueType == false);
     }
 }
