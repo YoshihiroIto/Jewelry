@@ -33,6 +33,15 @@ public sealed class ObservableCollectionEx<T> : ObservableCollection<T>
         if (IsInChanging == false)
             OnCollectionChanged(ResetEventArgs);
     }
+    
+    public void AddRange(ReadOnlySpan<T> items)
+    {
+        foreach (var item in items)
+            Items.Add(item);
+
+        if (IsInChanging == false)
+            OnCollectionChanged(ResetEventArgs);
+    }
 
     public new void Clear()
     {
