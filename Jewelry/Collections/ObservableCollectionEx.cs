@@ -83,6 +83,16 @@ public sealed class ObservableCollectionEx<T> : ObservableCollection<T>
         return CollectionsMarshal.AsSpan(list);
     }
 
+    public Span<T> AsSpan(int start)
+    {
+        return AsSpan()[start..];
+    }
+
+    public Span<T> AsSpan(int start, int length)
+    {
+        return AsSpan().Slice(start, length);
+    }
+    
     private bool IsInChanging => _changingDepth > 0;
     private int _changingDepth;
 
