@@ -24,9 +24,18 @@ public sealed class ObservableCollectionEx<T> : ObservableCollection<T>
         if (c == 0)
             OnCollectionChanged(ResetEventArgs);
     }
+    
+    public int EnsureCapacity(int capacity)
+    {
+        if (Items is not List<T> list)
+            throw new NotSupportedException();
+
+        return list.EnsureCapacity(capacity);
+    }
 
     public void AddRange(IEnumerable<T> items)
     {
+        
         foreach (var item in items)
             Items.Add(item);
 
