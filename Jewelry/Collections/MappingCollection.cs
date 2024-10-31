@@ -28,9 +28,15 @@ public static class ReadOnlyMappingCollectionExtensions
     }
 }
 
-public sealed class ReadOnlyMappingCollection<TSource, TTarget> : ReadOnlyCollection<TTarget>, IDisposable
+public sealed class ReadOnlyMappingCollection<TSource, TTarget> : ReadOnlyCollection<TTarget>, IDisposable, INotifyCollectionChanged
     where TSource : notnull
 {
+    public event NotifyCollectionChangedEventHandler? CollectionChanged
+    {
+        add => ((INotifyCollectionChanged)_source).CollectionChanged += value;
+        remove => ((INotifyCollectionChanged)_source).CollectionChanged -= value;
+    }
+    
     private readonly IDisposable _source;
 
     internal ReadOnlyMappingCollection(MappingCollection<TSource, TTarget> source)
