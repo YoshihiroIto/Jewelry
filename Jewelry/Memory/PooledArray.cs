@@ -80,7 +80,6 @@ public readonly ref struct PooledArray<T>
         if (_shouldReturnPool == false)
             return;
 
-        System.Array.Clear(Array, 0, Length);
         ArrayPool<T>.Shared.Return(Array, typeof(T).IsValueType == false);
     }
 }
