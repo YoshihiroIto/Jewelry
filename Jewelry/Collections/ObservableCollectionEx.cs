@@ -24,7 +24,7 @@ public sealed class ObservableCollectionEx<T> : ObservableCollection<T>
         if (c == 0)
             OnCollectionChanged(ResetEventArgs);
     }
-    
+
     public int EnsureCapacity(int capacity)
     {
         if (Items is not List<T> list)
@@ -35,7 +35,6 @@ public sealed class ObservableCollectionEx<T> : ObservableCollection<T>
 
     public void AddRange(IEnumerable<T> items)
     {
-        
         foreach (var item in items)
             Items.Add(item);
 
@@ -101,7 +100,15 @@ public sealed class ObservableCollectionEx<T> : ObservableCollection<T>
     {
         return AsSpan().Slice(start, length);
     }
-    
+
+    public void TrimExcess()
+    {
+        if (Items is not List<T> list)
+            throw new NotSupportedException();
+
+        list.TrimExcess();
+    }
+
     private bool IsInChanging => _changingDepth > 0;
     private int _changingDepth;
 
