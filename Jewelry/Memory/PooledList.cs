@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace Jewelry.Memory;
 
-public sealed class PooledList<T> : IEnumerable<T>, IDisposable
+public sealed class PooledList<T> : IReadOnlyList<T>, IDisposable
 {
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

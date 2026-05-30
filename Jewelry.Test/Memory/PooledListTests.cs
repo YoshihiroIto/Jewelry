@@ -265,7 +265,7 @@ public sealed class PooledListTests
         list.Add(1);
 
         // Assert
-        Assert.Equal(1, list.Count);
+        Assert.Single(list);
         Assert.Equal((byte)1, list[0]);
     }
 }
