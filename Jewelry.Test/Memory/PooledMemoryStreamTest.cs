@@ -770,18 +770,6 @@ public class PooledMemoryStreamTest
         Assert.Equal(standard.ToArray(), pooled.ToArray());
     }
 
-    // ════════════════════════════════════════════════════════════════════════
-    // clearOnReturn オプション
-    // ════════════════════════════════════════════════════════════════════════
-
-    [Fact]
-    public void ClearOnReturn_True_DisposesWithoutException()
-    {
-        // clearOnReturn=true で動作すること（セキュリティ用途）
-        var ms = new PooledMemoryStream(64, ArrayPool<byte>.Shared, clearOnReturn: true);
-        ms.Write(new byte[] { 1, 2, 3, 4, 5 }, 0, 5);
-        ms.Dispose(); // 例外なく破棄できること
-    }
 
     // ════════════════════════════════════════════════════════════════════════
     // Flush

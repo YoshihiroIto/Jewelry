@@ -23,7 +23,6 @@ public sealed class PooledMemoryStream : Stream
     private bool _disposed;
 
     private readonly ArrayPool<byte> _pool;
-    private readonly bool _clearOnReturn; // Set true when handling sensitive data
 
     // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -36,7 +35,7 @@ public sealed class PooledMemoryStream : Stream
     /// Initializes a new instance of <see cref="PooledMemoryStream"/> with default settings.
     /// </summary>
     public PooledMemoryStream()
-        : this(DefaultInitialCapacity, ArrayPool<byte>.Shared, clearOnReturn: false)
+        : this(DefaultInitialCapacity, ArrayPool<byte>.Shared)
     {
     }
 
@@ -45,7 +44,7 @@ public sealed class PooledMemoryStream : Stream
     /// </summary>
     /// <param name="initialCapacity">The initial capacity in bytes. Must be zero or greater.</param>
     public PooledMemoryStream(int initialCapacity)
-        : this(initialCapacity, ArrayPool<byte>.Shared, clearOnReturn: false)
+        : this(initialCapacity, ArrayPool<byte>.Shared)
     {
     }
 
@@ -54,11 +53,7 @@ public sealed class PooledMemoryStream : Stream
     /// </summary>
     /// <param name="initialCapacity">The initial capacity in bytes. Must be zero or greater.</param>
     /// <param name="pool">The <see cref="ArrayPool{T}"/> to use for buffer allocation.</param>
-    /// <param name="clearOnReturn">
-    /// Whether to zero-clear the buffer before returning it to the pool.
-    /// Set to <see langword="true"/> when handling sensitive data.
-    /// </param>
-    public PooledMemoryStream(int initialCapacity, ArrayPool<byte> pool, bool clearOnReturn = false)
+    public PooledMemoryStream(int initialCapacity, ArrayPool<byte> pool)
     {
         if (initialCapacity < 0)
             throw new ArgumentOutOfRangeException(nameof(initialCapacity), initialCapacity,
@@ -66,7 +61,6 @@ public sealed class PooledMemoryStream : Stream
         ArgumentNullException.ThrowIfNull(pool);
 
         _pool = pool;
-        _clearOnReturn = clearOnReturn;
         _buffer = initialCapacity == 0
             ? []
             : pool.Rent(initialCapacity);
@@ -156,8 +150,6 @@ public sealed class PooledMemoryStream : Stream
             SetCapacity(value);
         }
     }
-    
-    public Span<byte> GetSpan() => _buffer.AsSpan(0, _length);
 
     // ─── Stream Methods ───────────────────────────────────────────────────────────
 
@@ -372,7 +364,7 @@ public sealed class PooledMemoryStream : Stream
 
         // Array.Empty must not be returned to the pool
         if (toReturn.Length > 0)
-            _pool.Return(toReturn, _clearOnReturn);
+            _pool.Return(toReturn);
 
         base.Dispose(disposing);
     }
@@ -426,7 +418,7 @@ public sealed class PooledMemoryStream : Stream
         if (newCapacity == 0)
         {
             if (_buffer.Length > 0)
-                _pool.Return(_buffer, _clearOnReturn);
+                _pool.Return(_buffer);
             _buffer = [];
             return;
         }
@@ -437,7 +429,7 @@ public sealed class PooledMemoryStream : Stream
             Buffer.BlockCopy(_buffer, 0, newBuffer, 0, _length);
 
         if (_buffer.Length > 0)
-            _pool.Return(_buffer, _clearOnReturn);
+            _pool.Return(_buffer);
 
         _buffer = newBuffer;
     }
