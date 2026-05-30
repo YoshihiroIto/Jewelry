@@ -64,6 +64,118 @@ public class PooledMemoryStreamTest
     }
 
     // ════════════════════════════════════════════════════════════════════════
+    // Constructor with initial buffer (byte[] / ReadOnlySpan)
+    // ════════════════════════════════════════════════════════════════════════
+
+    [Fact]
+    public void Constructor_ByteArray_CopiesData()
+    {
+        var data = new byte[] { 1, 2, 3, 4, 5 };
+        using var ms = new PooledMemoryStream(data);
+
+        Assert.Equal(data.Length, ms.Length);
+        Assert.Equal(0L, ms.Position);
+        Assert.Equal(data, ms.ToArray());
+    }
+
+    [Fact]
+    public void Constructor_ByteArray_Empty()
+    {
+        using var ms = new PooledMemoryStream(Array.Empty<byte>());
+
+        Assert.Equal(0L, ms.Length);
+        Assert.Equal(0L, ms.Position);
+    }
+
+    [Fact]
+    public void Constructor_ByteArray_IsIndependentCopy()
+    {
+        var data = new byte[] { 1, 2, 3 };
+        using var ms = new PooledMemoryStream(data);
+
+        // 元配列を変更してもストリームの内容は変わらない
+        data[0] = 99;
+        Assert.Equal(1, ms.ToArray()[0]);
+    }
+
+    [Fact]
+    public void Constructor_ByteArray_WithCustomPool()
+    {
+        var pool = ArrayPool<byte>.Create(1024, 10);
+        var data = new byte[] { 10, 20, 30 };
+        using var ms = new PooledMemoryStream(data, pool);
+
+        Assert.Equal(data, ms.ToArray());
+    }
+
+    [Fact]
+    public void Constructor_ByteArray_CanReadAfterConstruction()
+    {
+        var data = new byte[] { 7, 8, 9 };
+        using var ms = new PooledMemoryStream(data);
+
+        Assert.Equal(7, ms.ReadByte());
+        Assert.Equal(8, ms.ReadByte());
+        Assert.Equal(9, ms.ReadByte());
+        Assert.Equal(-1, ms.ReadByte()); // EOF
+    }
+
+    [Fact]
+    public void Constructor_ByteArray_CanWriteAfterConstruction()
+    {
+        var data = new byte[] { 1, 2, 3 };
+        using var ms = new PooledMemoryStream(data);
+
+        // 末尾に追記
+        ms.Position = ms.Length;
+        ms.WriteByte(4);
+
+        Assert.Equal(new byte[] { 1, 2, 3, 4 }, ms.ToArray());
+    }
+
+    [Fact]
+    public void Constructor_ByteArray_CanOverwriteInPlace()
+    {
+        var data = new byte[] { 1, 2, 3, 4, 5 };
+        using var ms = new PooledMemoryStream(data);
+
+        ms.Position = 1;
+        ms.Write(new byte[] { 20, 30 }, 0, 2);
+
+        Assert.Equal(new byte[] { 1, 20, 30, 4, 5 }, ms.ToArray());
+    }
+
+    [Fact]
+    public void Constructor_Span_CopiesData()
+    {
+        ReadOnlySpan<byte> span = new byte[] { 10, 20, 30 };
+        using var ms = new PooledMemoryStream(span);
+
+        Assert.Equal(3L, ms.Length);
+        Assert.Equal(0L, ms.Position);
+        Assert.Equal(new byte[] { 10, 20, 30 }, ms.ToArray());
+    }
+
+    [Fact]
+    public void Constructor_Span_Empty()
+    {
+        using var ms = new PooledMemoryStream(ReadOnlySpan<byte>.Empty);
+
+        Assert.Equal(0L, ms.Length);
+        Assert.Equal(0L, ms.Position);
+    }
+
+    [Fact]
+    public void Constructor_Span_WithCustomPool()
+    {
+        var pool = ArrayPool<byte>.Create(1024, 10);
+        ReadOnlySpan<byte> span = new byte[] { 5, 10, 15 };
+        using var ms = new PooledMemoryStream(span, pool);
+
+        Assert.Equal(new byte[] { 5, 10, 15 }, ms.ToArray());
+    }
+
+    // ════════════════════════════════════════════════════════════════════════
     // WriteByte / ReadByte
     // ════════════════════════════════════════════════════════════════════════
 

@@ -68,6 +68,60 @@ public sealed class PooledMemoryStream : Stream
         _position = 0;
     }
 
+    /// <summary>
+    /// Initializes a new instance of <see cref="PooledMemoryStream"/> pre-filled with a copy of <paramref name="buffer"/>.
+    /// The stream position is set to the beginning after construction.
+    /// </summary>
+    /// <param name="buffer">The byte array whose contents are copied into the stream.</param>
+    public PooledMemoryStream(byte[] buffer)
+        : this(buffer.AsSpan(), ArrayPool<byte>.Shared) { }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="PooledMemoryStream"/> pre-filled with a copy of
+    /// <paramref name="buffer"/>, using the specified <see cref="ArrayPool{T}"/>.
+    /// The stream position is set to the beginning after construction.
+    /// </summary>
+    /// <param name="buffer">The byte array whose contents are copied into the stream.</param>
+    /// <param name="pool">The <see cref="ArrayPool{T}"/> to use for buffer allocation.</param>
+    public PooledMemoryStream(byte[] buffer, ArrayPool<byte> pool)
+        : this(buffer.AsSpan(), pool) { }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="PooledMemoryStream"/> pre-filled with a copy of
+    /// <paramref name="buffer"/>.
+    /// The stream position is set to the beginning after construction.
+    /// </summary>
+    /// <param name="buffer">The read-only span whose contents are copied into the stream.</param>
+    public PooledMemoryStream(ReadOnlySpan<byte> buffer)
+        : this(buffer, ArrayPool<byte>.Shared) { }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="PooledMemoryStream"/> pre-filled with a copy of
+    /// <paramref name="buffer"/>, using the specified <see cref="ArrayPool{T}"/>.
+    /// The stream position is set to the beginning after construction.
+    /// </summary>
+    /// <param name="buffer">The read-only span whose contents are copied into the stream.</param>
+    /// <param name="pool">The <see cref="ArrayPool{T}"/> to use for buffer allocation.</param>
+    public PooledMemoryStream(ReadOnlySpan<byte> buffer, ArrayPool<byte> pool)
+    {
+        ArgumentNullException.ThrowIfNull(pool);
+
+        _pool = pool;
+
+        if (buffer.IsEmpty)
+        {
+            _buffer = [];
+        }
+        else
+        {
+            _buffer = pool.Rent(buffer.Length);
+            buffer.CopyTo(_buffer);
+        }
+
+        _length   = buffer.Length;
+        _position = 0;
+    }
+
     // ─── Stream Properties ────────────────────────────────────────────────────────
 
     /// <inheritdoc/>
