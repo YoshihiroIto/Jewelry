@@ -156,6 +156,8 @@ public sealed class PooledMemoryStream : Stream
             SetCapacity(value);
         }
     }
+    
+    public Span<byte> GetSpan() => _buffer.AsSpan(0, _length);
 
     // ─── Stream Methods ───────────────────────────────────────────────────────────
 
@@ -277,10 +279,17 @@ public sealed class PooledMemoryStream : Stream
     {
         ThrowIfDisposed();
 
+        var previousLength = _length;
         var newPosition = _position + 1;
         if (newPosition > _length)
         {
             EnsureCapacity(newPosition);
+            if (_position > previousLength)
+            {
+                // Match MemoryStream: skipped bytes become zero-filled.
+                _buffer.AsSpan(previousLength, _position - previousLength).Clear();
+            }
+
             _length = newPosition;
         }
 
@@ -375,6 +384,7 @@ public sealed class PooledMemoryStream : Stream
     {
         if (source.IsEmpty) return;
 
+        var previousLength = _length;
         var newPosition = _position + source.Length;
         if (newPosition < 0) // Overflow check
             throw new IOException("The stream has exceeded its maximum size.");
@@ -382,6 +392,12 @@ public sealed class PooledMemoryStream : Stream
         if (newPosition > _length)
         {
             EnsureCapacity(newPosition);
+            if (_position > previousLength)
+            {
+                // Match MemoryStream: skipped bytes become zero-filled.
+                _buffer.AsSpan(previousLength, _position - previousLength).Clear();
+            }
+
             _length = newPosition;
         }
 
