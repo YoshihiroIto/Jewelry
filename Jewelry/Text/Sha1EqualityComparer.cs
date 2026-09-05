@@ -2,7 +2,7 @@
 
 namespace Jewelry.Text;
 
-public sealed  class Sha1EqualityComparer : IEqualityComparer<Sha1>
+public sealed class Sha1EqualityComparer : IEqualityComparer<Sha1>
 {
     public static readonly Sha1EqualityComparer Shared = new();
     
