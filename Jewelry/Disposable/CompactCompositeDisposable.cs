@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using System.Threading;
 
 namespace Jewelry.Disposable;
@@ -132,6 +133,12 @@ public sealed class CompactCompositeDisposable : IDisposable
             item.Dispose();
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public void Add(Action action)
+    {
+        Add(new AnonymousDisposable(action));
+    }
+
     public void Clear()
     {
         IDisposable? first;
@@ -235,5 +242,19 @@ public sealed class CompactCompositeDisposable : IDisposable
 
         foreach (var disposable in rest)
             disposable.Dispose();
+    }
+}
+
+file sealed class AnonymousDisposable(Action dispose) : IDisposable
+{
+    public bool IsDisposed => _dispose == null;
+
+    private volatile Action? _dispose = dispose;
+
+    public void Dispose()
+    {
+        var action = Interlocked.Exchange<Action>(ref _dispose!, null!);
+
+        action?.Invoke();
     }
 }
