@@ -1,6 +1,8 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
-namespace Filedini.Foundation;
+namespace Jewelry;
 
 public static class TaskExtensions
 {
