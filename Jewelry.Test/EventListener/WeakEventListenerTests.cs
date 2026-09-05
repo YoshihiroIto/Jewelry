@@ -8,7 +8,7 @@ namespace Jewelry.Test.EventListener;
 public class WeakEventListenerTests
 {
     [Fact]
-    public void 作成メソッドはイベントハンドラを正しく追加する()
+    public void Create_AddsEventHandler()
     {
         // Arrange
         var source = new EventSource();
@@ -30,7 +30,7 @@ public class WeakEventListenerTests
     }
 
     [Fact]
-    public void 破棄メソッドはイベントハンドラを正しく削除する()
+    public void Dispose_RemovesEventHandler()
     {
         // Arrange
         var source = new EventSource();
@@ -52,7 +52,7 @@ public class WeakEventListenerTests
     }
 
     [Fact]
-    public void リスナーがgcされたときにイベントが解除される()
+    public void EventHandlerIsRemoved_WhenListenerIsGarbageCollected()
     {
         // Arrange
         var source = new EventSource();

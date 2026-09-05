@@ -9,7 +9,7 @@ namespace Jewelry.Test.Memory;
 public sealed class BufferPoolTests
 {
     [Fact]
-    public void サイズが閾値以下の場合はプールから貸し出されること()
+    public void Rent_ReturnsPooledBuffer_WhenSizeIsAtOrBelowThreshold()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -28,7 +28,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void サイズが閾値を超える場合は新しい配列が割り当てられること()
+    public void Rent_AllocatesNewArray_WhenSizeExceedsThreshold()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -48,7 +48,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void サイズが閾値以下の場合はプールに返却されること()
+    public void Return_ReturnsBufferToPool_WhenSizeIsAtOrBelowThreshold()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -63,7 +63,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void サイズが閾値を超える場合はプールに返却されないこと()
+    public void Return_DoesNotReturnBufferToPool_WhenSizeExceedsThreshold()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -78,7 +78,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void UnsafeSizeOfを考慮した閾値で正しく動作すること()
+    public void Rent_UsesThresholdAdjustedForUnsafeSizeOf()
     {
         // Arrange
         // sizeof(int) is 4. So maxPooledBufferSize in elements is 1024 / 4 = 256.
@@ -103,7 +103,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void サイズ0を要求しても配列が返り返却しても例外が出ないこと()
+    public void RentAndReturn_DoNotThrow_ForZeroSize()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -121,7 +121,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void 負のサイズを要求すると例外が投げられること()
+    public void Rent_ThrowsArgumentOutOfRangeException_ForNegativeSize()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -132,7 +132,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void 閾値ちょうどのサイズではプールから貸し出されること()
+    public void Rent_ReturnsPooledBuffer_WhenSizeEqualsThreshold()
     {
         // Arrange
         const int maxPooledBufferSize = 1024; // byte要素のときは要素数の閾値も1024
@@ -150,7 +150,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void Byte型で閾値を1だけ超えると新しい配列が割り当てられること()
+    public void Rent_AllocatesNewArray_WhenByteSizeExceedsThresholdByOne()
     {
         // Arrange
         const int maxPooledBufferSize = 1024;
@@ -168,7 +168,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void Int型で非割り切りバイト数指定でも要素単位の閾値が切り捨てで適用されること()
+    public void Rent_FloorsElementThreshold_ForNonDivisibleIntByteSize()
     {
         // Arrange
         const int maxPooledBufferSizeInBytes = 1025; // 1025 / 4 = 256 要素が閾値
@@ -188,7 +188,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public void 大きな配列を返却しても再利用されず毎回新規割り当てになること()
+    public void Rent_DoesNotReuseArraysExceedingThreshold()
     {
         // Arrange
         const int maxPooledBufferSize = 256;
@@ -210,7 +210,7 @@ public sealed class BufferPoolTests
     }
 
     [Fact]
-    public async Task 並行レンタルと返却で例外が発生しないこと()
+    public async Task RentAndReturn_DoNotThrow_WhenConcurrent()
     {
         // Arrange
         const int maxPooledBufferSize = 4096;

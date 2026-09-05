@@ -8,7 +8,7 @@ namespace Jewelry.Test.Disposable;
 public class CompactCompositeDisposableTests
 {
     [Fact]
-    public void 追加した破棄可能オブジェクトを追加順に一括破棄できること()
+    public void Dispose_DisposesAddedDisposablesInOrder()
     {
         // Arrange
         var disposeOrder = new List<int>();
@@ -34,7 +34,7 @@ public class CompactCompositeDisposableTests
     }
 
     [Fact]
-    public void 破棄後に追加した破棄可能オブジェクトは即時破棄されること()
+    public void Add_DisposesDisposableImmediately_AfterDisposal()
     {
         // Arrange
         var disposables = new CompactCompositeDisposable();
@@ -51,7 +51,7 @@ public class CompactCompositeDisposableTests
     }
 
     [Fact]
-    public void Clearはコレクションを破棄済みにせず現在の要素だけを破棄すること()
+    public void Clear_DisposesCurrentItems_WithoutDisposingCollection()
     {
         // Arrange
         var first = new TrackingDisposable();
@@ -72,7 +72,7 @@ public class CompactCompositeDisposableTests
     }
 
     [Fact]
-    public void 五件以上の破棄可能オブジェクトも追加順に一括破棄できること()
+    public void Dispose_DisposesMoreThanFourDisposablesInOrder()
     {
         // Arrange
         var disposeOrder = new List<int>();
@@ -95,7 +95,7 @@ public class CompactCompositeDisposableTests
     }
 
     [Fact]
-    public void Clear後に少数要素を再追加して破棄できること()
+    public void Dispose_DisposesItemsAddedAfterClear()
     {
         // Arrange
         var first = new TrackingDisposable();
@@ -116,7 +116,7 @@ public class CompactCompositeDisposableTests
     }
 
     [Fact]
-    public void AddToで追加した破棄可能オブジェクトをそのまま返すこと()
+    public void AddTo_ReturnsAddedDisposable()
     {
         // Arrange
         var disposables = new CompactCompositeDisposable();
@@ -132,7 +132,7 @@ public class CompactCompositeDisposableTests
     }
 
     [Fact]
-    public void Nullを追加しようとすると例外が発生すること()
+    public void Add_ThrowsArgumentNullException_ForNull()
     {
         // Arrange
         var disposables = new CompactCompositeDisposable();

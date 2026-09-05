@@ -17,7 +17,7 @@ public class NotifyCollectionChangedExtensionsTests
     }
 
     [Fact]
-    public void CollectionChangedイベントリスナーを作成するとハンドラを登録する()
+    public void CreateCollectionChangedEventListener_RegistersHandler()
     {
         // Arrange
         var collection = new TestObservableCollection();
@@ -36,7 +36,7 @@ public class NotifyCollectionChangedExtensionsTests
     }
 
     [Fact]
-    public void CollectionChangedイベントリスナー作成結果を破棄するとハンドラを解除する()
+    public void DisposeCollectionChangedEventListener_UnregistersHandler()
     {
         // Arrange
         var collection = new TestObservableCollection();

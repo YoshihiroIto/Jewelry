@@ -17,7 +17,7 @@ public class NotifyPropertyChangedExtensionsTests
     }
 
     [Fact]
-    public void PropertyChangedイベントリスナーを作成するとハンドラを登録する()
+    public void CreatePropertyChangedEventListener_RegistersHandler()
     {
         // Arrange
         var obj = new TestObservableObject();
@@ -35,7 +35,7 @@ public class NotifyPropertyChangedExtensionsTests
     }
 
     [Fact]
-    public void PropertyChangedイベントリスナー作成結果を破棄するとハンドラを解除する()
+    public void DisposePropertyChangedEventListener_UnregistersHandler()
     {
         // Arrange
         var obj = new TestObservableObject();

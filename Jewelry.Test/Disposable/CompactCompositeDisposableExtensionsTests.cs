@@ -6,7 +6,7 @@ namespace Jewelry.Test.Disposable;
 public class CompactCompositeDisposableExtensionsTests
 {
     [Fact]
-    public void 追加拡張メソッドでアクションをCompactCompositeDisposableに追加できること()
+    public void Add_AddsActionToCompactCompositeDisposable()
     {
         // Arrange
         var compositeDisposable = new CompactCompositeDisposable();

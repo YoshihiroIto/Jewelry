@@ -52,7 +52,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 取得を呼び出すとプールが空の場合は新しいインスタンスが返される()
+    public void Get_ReturnsNewInstance_WhenPoolIsEmpty()
     {
         // Arrange
         var pool = new ObjectPool<PooledObject>(ItemPoolCount);
@@ -65,7 +65,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 取得を呼び出すとプールにオブジェクトが存在する場合は既存のインスタンスが返される()
+    public void Get_ReturnsExistingInstance_WhenPoolContainsObject()
     {
         // Arrange
         var pool = new ObjectPool<PooledObject>(ItemPoolCount);
@@ -80,7 +80,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 返却を呼び出すとオブジェクトがプールに返される()
+    public void Return_AddsObjectToPool()
     {
         // Arrange
         var pool = new ObjectPool<PooledObject>(ItemPoolCount);
@@ -95,7 +95,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 取得を複数回呼び出すと異なるインスタンスが返される()
+    public void Get_ReturnsDifferentInstances_WhenCalledMultipleTimes()
     {
         // Arrange
         var pool = new ObjectPool<PooledObject>(ItemPoolCount);
@@ -109,7 +109,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 取得と返却を繰り返すとインスタンスが再利用される()
+    public void Get_ReusesInstance_AfterReturn()
     {
         // Arrange
         var pool = new ObjectPool<PooledObject>(ItemPoolCount);
@@ -124,7 +124,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 事前に返却済みの数以内の取得では追加割り当てが発生しない()
+    public void Get_DoesNotAllocate_WhenRequestsDoNotExceedReturnedCount()
     {
         // Arrange
         using var counter = AllocationCounterScope.Enter();
@@ -160,7 +160,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public void 事前に返却済みの数を超える取得では超過分のみが新規割り当てされる()
+    public void Get_AllocatesOnlyExcessInstances_WhenRequestsExceedReturnedCount()
     {
         // Arrange
         using var counter = AllocationCounterScope.Enter();
@@ -188,7 +188,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public async Task 並列に多数回取得するとそれぞれ別インスタンスが取得される()
+    public async Task Get_ReturnsDistinctInstances_WhenCalledConcurrently()
     {
         // Arrange
         var pool = new ObjectPool<PooledObject>(ItemPoolCount);
@@ -206,7 +206,7 @@ public sealed class ObjectPoolTests
     }
 
     [Fact]
-    public async Task 並列実行中でも割り当て数の計測はテストごとに分離される()
+    public async Task AllocationCounts_AreIsolatedPerTest_WhenRunConcurrently()
     {
         // Arrange
         static int RunIsolatedAllocationCount(int count)

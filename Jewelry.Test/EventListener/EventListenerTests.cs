@@ -7,7 +7,7 @@ namespace Jewelry.Test.EventListener;
 public class EventListenerTests
 {
     [Fact]
-    public void 作成メソッドはイベントハンドラを追加する()
+    public void Create_AddsEventHandler()
     {
         // Arrange
         var eventAdded = false;
@@ -24,7 +24,7 @@ public class EventListenerTests
     }
 
     [Fact]
-    public void 破棄メソッドはイベントハンドラを削除する()
+    public void Dispose_RemovesEventHandler()
     {
         // Arrange
         var eventRemoved = false;
@@ -41,7 +41,7 @@ public class EventListenerTests
     }
 
     [Fact]
-    public void 破棄を複数回呼び出してもイベントハンドラは一度だけ削除される()
+    public void Dispose_RemovesEventHandlerOnlyOnce_WhenCalledMultipleTimes()
     {
         // Arrange
         var removeCallCount = 0;

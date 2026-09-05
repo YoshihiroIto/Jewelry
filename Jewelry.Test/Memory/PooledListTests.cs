@@ -8,7 +8,7 @@ namespace Jewelry.Test.Memory;
 public sealed class PooledListTests
 {
     [Fact]
-    public void 要素を追加すると件数が増加しで順序が保持される()
+    public void Add_IncreasesCountAndPreservesOrder()
     {
         // Arrange
         using var list = new PooledList<int>(2);
@@ -24,7 +24,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 小さい初期容量でもで容量拡張後に全要素が保持される()
+    public void Resize_PreservesAllItems_WithSmallInitialCapacity()
     {
         // Arrange
         using var list = new PooledList<int>(1);
@@ -40,7 +40,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void スパン取得で件数分のデータを返す()
+    public void AsSpan_ReturnsItemsUpToCount()
     {
         // Arrange
         using var list = new PooledList<string>(2);
@@ -59,7 +59,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 列挙子で順序通りに列挙できる()
+    public void Enumeration_ReturnsItemsInOrder()
     {
         // Arrange
         using var list = new PooledList<int>(3);
@@ -75,7 +75,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 破棄後に追加を呼び出すとオブジェクト破棄例外が送出される()
+    public void Add_ThrowsObjectDisposedException_AfterDisposal()
     {
         // Arrange
         var list = new PooledList<int>(1);
@@ -86,7 +86,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 破棄後にスパン取得を呼び出すとオブジェクト破棄例外が送出される()
+    public void AsSpan_ThrowsObjectDisposedException_AfterDisposal()
     {
         // Arrange
         var list = new PooledList<int>(1);
@@ -97,7 +97,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 破棄後に列挙子取得を呼び出すとオブジェクト破棄例外が送出される()
+    public void Enumeration_ThrowsObjectDisposedException_AfterDisposal()
     {
         // Arrange
         var list = new PooledList<int>(1);
@@ -108,7 +108,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void インデクサ取得で追加済み要素を正しく取得できる()
+    public void IndexerGet_ReturnsAddedItems()
     {
         // Arrange
         using var list = new PooledList<int>(2);
@@ -125,7 +125,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void インデクサ設定で既存要素の値が更新される()
+    public void IndexerSet_UpdatesExistingItems()
     {
         // Arrange
         using var list = new PooledList<int>(1);
@@ -142,7 +142,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void インデクサ取得で範囲外インデックスは例外が発生する()
+    public void IndexerGet_ThrowsArgumentOutOfRangeException_ForOutOfRangeIndex()
     {
         // Arrange
         using var list = new PooledList<int>(1);
@@ -154,7 +154,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void インデクサ設定で範囲外インデックスは例外が発生する()
+    public void IndexerSet_ThrowsArgumentOutOfRangeException_ForOutOfRangeIndex()
     {
         // Arrange
         using var list = new PooledList<int>(1);
@@ -166,7 +166,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void インデクサ取得で破棄後はオブジェクト破棄例外が発生する()
+    public void IndexerGet_ThrowsObjectDisposedException_AfterDisposal()
     {
         // Arrange
         var list = new PooledList<int>(1);
@@ -178,7 +178,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void インデクサ設定で破棄後はオブジェクト破棄例外が発生する()
+    public void IndexerSet_ThrowsObjectDisposedException_AfterDisposal()
     {
         // Arrange
         var list = new PooledList<int>(1);
@@ -190,7 +190,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 最大プールバッファサイズを超える容量を要求しても正常に利用できる()
+    public void Add_Works_WhenInitialCapacityExceedsMaximumPooledBufferSize()
     {
         // Arrange
         var maxPooledBufferSize = 1024;
@@ -208,7 +208,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void リストが最大プールバッファサイズを超えて拡張された場合も正常に動作する()
+    public void Add_Works_WhenResizedCapacityExceedsMaximumPooledBufferSize()
     {
         // Arrange
         var maxPooledBufferSize = 128;
@@ -225,7 +225,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 最大プールバッファサイズ指定のリストを破棄しても例外が発生しない()
+    public void Dispose_DoesNotThrow_WithMaximumPooledBufferSize()
     {
         // Arrange
         var maxPooledBufferSize = 128;
@@ -255,7 +255,7 @@ public sealed class PooledListTests
     }
 
     [Fact]
-    public void 古いコンストラクタはバッファプールを使用しない()
+    public void LegacyConstructor_DoesNotUseBufferPool()
     {
         // Arrange
         var capacity = 1024 * 1024; // 1MB
